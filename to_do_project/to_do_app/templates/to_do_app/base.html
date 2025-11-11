@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django To-Do App</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'to_do_app/css/style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">Django To-Do</div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'task_list' %}">Home</a></li>
+                    <li><a href="{% url 'add_task' %}">Add Task</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            {% block content %}
+            <!-- Page-specific content will go here -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Django To-Do App. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'to_do_app/js/main.js' %}"></script>
+</body>
+</html>
