@@ -1,17 +1,17 @@
 /* ===== ELEGANT COLOR SCHEME ===== */
 :root {
-    --primary-color: #a78bfa;      /* Soft lavender */
-    --secondary-color: #c4b5fd;    /* Light lavender */
-    --accent-color: #f472b6;       /* Blush pink */
-    --accent-secondary: #f9a8d4;   /* Light pink */
-    --mint-green: #34d399;         /* Mint green */
-    --background-color: #fdf4ff;   /* Very light lavender */
-    --card-bg: rgba(255, 255, 255, 0.9); /* Glass morphism */
-    --text-color: #4c1d95;         /* Deep purple */
-    --text-light: #6d28d9;         /* Medium purple */
-    --success-color: #34d399;      /* Mint green */
-    --warning-color: #fbbf24;      /* Warm amber */
-    --danger-color: #f87171;       /* Soft coral */
+    --primary-color: #a78bfa;
+    --secondary-color: #c4b5fd;
+    --accent-color: #f472b6;
+    --accent-secondary: #f9a8d4;
+    --mint-green: #34d399;
+    --background-color: #fdf4ff;
+    --card-bg: #ffffff;
+    --text-color: #4c1d95;
+    --text-light: #6d28d9;
+    --success-color: #34d399;
+    --warning-color: #fbbf24;
+    --danger-color: #f87171;
     --border-radius: 20px;
     --border-radius-sm: 12px;
     --box-shadow: 0 8px 32px rgba(167, 139, 250, 0.15);
@@ -22,7 +22,6 @@
     --gradient-gold: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
 }
 
-/* ===== BASE STYLES ===== */
 * {
     margin: 0;
     padding: 0;
@@ -35,119 +34,17 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     min-height: 100vh;
-    /* 🎀 Beautiful gradient background */
-    background-image: 
-        radial-gradient(circle at 15% 50%, rgba(167, 139, 250, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 85% 30%, rgba(244, 114, 182, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 80%, rgba(52, 211, 153, 0.05) 0%, transparent 50%);
-}
-
-/* ===== SMOOTH SCROLLING ===== */
-html {
-    scroll-behavior: smooth;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes float {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-    }
-    50% { 
-        transform: translateY(-15px) rotate(2deg); 
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes shimmer {
-    0% { 
-        background-position: -200% 0; 
-    }
-    100% { 
-        background-position: 200% 0; 
-    }
-}
-
-@keyframes pulse {
-    0%, 100% { 
-        opacity: 1; 
-    }
-    50% { 
-        opacity: 0.7; 
-    }
-}
-
-@keyframes bounceSoft {
-    0%, 20%, 53%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40%, 43% {
-        transform: translateY(-12px);
-    }
-    70% {
-        transform: translateY(-6px);
-    }
-}
-
-@keyframes glow {
-    0%, 100% {
-        box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 30px rgba(244, 114, 182, 0.5);
-    }
-}
-
-@keyframes shine {
-    0% {
-        transform: translateX(-100%) rotate(45deg);
-    }
-    100% {
-        transform: translateX(200%) rotate(45deg);
-    }
-}
-
-@keyframes confetti {
-    0% {
-        transform: translateY(-100px) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-    }
 }
 
 /* ===== HEADER & NAVIGATION ===== */
 header {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
     border-bottom: 1px solid rgba(167, 139, 250, 0.2);
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    animation: fadeInUp 0.8s ease-out;
+    box-shadow: 0 2px 10px rgba(167, 139, 250, 0.1);
 }
 
 .navbar {
@@ -163,8 +60,6 @@ header {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    /* 🦋 Floating animation */
-    animation: float 4s ease-in-out infinite;
 }
 
 .nav-links {
@@ -179,38 +74,17 @@ header {
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius-sm);
-    transition: all 0.4s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.nav-links a::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--gradient-primary);
-    transition: all 0.4s ease;
-    transform: translateX(-50%);
 }
 
 .nav-links a:hover {
     color: var(--primary-color);
-    /* 🎭 Hover effect */
-    transform: translateY(-3px);
-}
-
-.nav-links a:hover::before {
-    width: 80%;
+    background: rgba(167, 139, 250, 0.1);
 }
 
 /* ===== MAIN CONTENT ===== */
 main {
     min-height: calc(100vh - 140px);
     padding: 2rem 0;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .container {
@@ -230,7 +104,6 @@ main {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 /* ===== CARDS ===== */
@@ -241,24 +114,35 @@ main {
     padding: 2rem;
     margin-bottom: 2rem;
     border: 1px solid rgba(167, 139, 250, 0.1);
-    /* 🔮 Glass morphism */
-    backdrop-filter: blur(10px);
-    transition: all 0.4s ease;
-    animation: fadeInScale 0.6s ease-out;
+    transition: none;
+    transform: none;
 }
 
 .card:hover {
-    /* 🎭 Hover effect */
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: var(--box-shadow-hover);
-    /* ✨ Glow effect on hover */
-    animation: glow 2s ease-in-out infinite;
+    box-shadow: var(--box-shadow);
+    transform: none;
+}
+
+/* ===== FORM CARDS (No Hover Effects) ===== */
+.form-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(167, 139, 250, 0.1);
+    transition: none;
+    transform: none;
+}
+
+.form-card:hover {
+    box-shadow: var(--box-shadow);
+    transform: none;
 }
 
 /* ===== FORMS ===== */
 .form-group {
     margin-bottom: 1.5rem;
-    animation: fadeInUp 0.6s ease-out;
 }
 
 label {
@@ -274,16 +158,15 @@ input, select, textarea {
     border: 2px solid #e9d5ff;
     border-radius: var(--border-radius-sm);
     font-size: 1rem;
-    transition: all 0.4s ease;
     background: var(--card-bg);
     color: var(--text-color);
+    transition: none;
 }
 
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
-    transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
 }
 
 textarea {
@@ -305,31 +188,12 @@ button, .btn {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    transition: all 0.4s ease;
     text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    /* 🎪 Interactive feedback */
-}
-
-button::before, .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.6s;
-}
-
-button:hover::before, .btn:hover::before {
-    left: 100%;
+    transition: none;
 }
 
 button:hover, .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
 }
 
 .btn-success {
@@ -369,14 +233,9 @@ button:hover, .btn:hover {
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(167, 139, 250, 0.1);
-    transition: all 0.4s ease;
-    animation: fadeInUp 0.6s ease-out;
-    /* 🔮 Glass morphism */
-    backdrop-filter: blur(10px);
 }
 
 .task-item:hover {
-    transform: translateX(10px);
     box-shadow: var(--box-shadow-hover);
 }
 
@@ -421,9 +280,6 @@ button:hover, .btn:hover {
     font-size: 0.75rem;
     font-weight: 600;
     margin-right: 0.5rem;
-    animation: fadeInScale 0.3s ease-out;
-    /* 🦋 Floating effect */
-    animation: float 3s ease-in-out infinite;
 }
 
 .category-work {
@@ -455,13 +311,11 @@ button:hover, .btn:hover {
     box-shadow: var(--box-shadow);
     padding: 2rem;
     text-align: center;
-    transition: all 0.4s ease;
     border: 1px solid rgba(167, 139, 250, 0.1);
-    animation: fadeInUp 0.6s ease-out;
     position: relative;
     overflow: hidden;
-    /* 🔮 Glass morphism */
-    backdrop-filter: blur(10px);
+    transition: none;
+    transform: none;
 }
 
 .stat-card::before {
@@ -475,9 +329,8 @@ button:hover, .btn:hover {
 }
 
 .stat-card:hover {
-    /* 🎭 Hover effect */
-    transform: translateY(-10px) scale(1.05);
-    box-shadow: var(--box-shadow-hover);
+    box-shadow: var(--box-shadow);
+    transform: none;
 }
 
 .stat-value {
@@ -488,8 +341,6 @@ button:hover, .btn:hover {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    /* ✨ Pulse animation */
-    animation: pulse 2s ease-in-out infinite;
 }
 
 .stat-label {
@@ -498,47 +349,16 @@ button:hover, .btn:hover {
     font-weight: 500;
 }
 
-/* ===== PROGRESS CIRCLE ===== */
-.progress-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.progress-circle {
-    position: relative;
-    margin-bottom: 1rem;
-    /* 🦋 Floating animation */
-    animation: float 4s ease-in-out infinite;
-}
-
-.progress-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
 /* ===== EMPTY STATES ===== */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
     color: var(--text-light);
-    animation: fadeInUp 0.8s ease-out;
 }
 
 .empty-icon {
     font-size: 4rem;
     margin-bottom: 1.5rem;
-    /* 🦋 Bouncing animation */
-    animation: bounceSoft 2s ease-in-out infinite;
     display: inline-block;
 }
 
@@ -554,42 +374,15 @@ button:hover, .btn:hover {
     opacity: 0.8;
 }
 
-/* ===== LOADING STATES ===== */
-.loading-spinner {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(167, 139, 250, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--primary-color);
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.skeleton-loading {
-    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-    background-size: 200% 100%;
-    /* 💫 Shimmer effect */
-    animation: shimmer 1.5s infinite;
-    border-radius: var(--border-radius);
-}
-
 /* ===== MESSAGES ===== */
 .messages {
     margin-bottom: 2rem;
-    animation: fadeInUp 0.6s ease-out;
 }
 
 .message {
     padding: 1rem 1.5rem;
     border-radius: var(--border-radius-sm);
     margin-bottom: 1rem;
-    animation: fadeInUp 0.5s ease-out;
-    /* 🔮 Glass morphism */
-    backdrop-filter: blur(10px);
 }
 
 .message.success {
@@ -612,28 +405,6 @@ footer {
     padding: 2rem 0;
     margin-top: 4rem;
     border-top: 1px solid rgba(167, 139, 250, 0.1);
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-    /* 🔮 Glass morphism */
-    backdrop-filter: blur(10px);
-}
-
-/* ===== CUSTOM SCROLLBAR ===== */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--gradient-primary);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -668,7 +439,6 @@ footer {
     }
 }
 
-/* ===== UTILITY CLASSES ===== */
 .text-center { text-align: center; }
 .mt-1 { margin-top: 0.5rem; }
 .mt-2 { margin-top: 1rem; }
@@ -681,27 +451,3 @@ footer {
 .align-center { align-items: center; }
 .gap-1 { gap: 0.5rem; }
 .gap-2 { gap: 1rem; }
-
-/* ===== SPECIAL EFFECTS ===== */
-.confetti {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background: var(--gradient-primary);
-    animation: confetti 5s linear forwards;
-    pointer-events: none;
-}
-
-.glass-effect {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.floating {
-    animation: float 3s ease-in-out infinite;
-}
-
-.pulse-soft {
-    animation: pulse 2s ease-in-out infinite;
-}
