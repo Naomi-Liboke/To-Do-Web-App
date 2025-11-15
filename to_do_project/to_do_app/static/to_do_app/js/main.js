@@ -1,4 +1,7 @@
 // JavaScript for Django To-Do App
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Django To-Do App JavaScript loaded');
 
@@ -276,3 +279,18 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const welcome = document.getElementById('welcome-message');
+    if (welcome) {
+        // Fade in after 0.5s
+        setTimeout(() => {
+            welcome.classList.add('show');
+        }, 500);
+
+        // Fade out after 4s
+        setTimeout(() => {
+            welcome.classList.remove('show');
+        }, 4500);
+    }
+});
