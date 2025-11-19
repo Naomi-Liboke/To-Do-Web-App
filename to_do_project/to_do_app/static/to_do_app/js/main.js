@@ -1,9 +1,10 @@
 // JavaScript for Django To-Do App
 
-
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Django To-Do App JavaScript loaded');
+
+    // Initialize theme system first
+    initializeTheme();
 
     // Mark task as completed/pending (frontend only - for visual feedback)
     const completeButtons = document.querySelectorAll('.complete-btn');
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!field.value.trim()) {
                     isValid = false;
                     field.style.borderColor = 'var(--danger-color)';
-                    field.style.backgroundColor = '#fff5f5';
+                    field.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--background-color');
                     
                     // Add shake animation
                     field.classList.add('shake');
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         firstInvalidField = field;
                     }
                 } else {
-                    field.style.borderColor = '#ddd';
+                    field.style.borderColor = '';
                     field.style.backgroundColor = '';
                 }
             });
@@ -85,7 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
             message.style.opacity = '0';
             message.style.transform = 'translateY(-10px)';
             setTimeout(() => {
-                message.remove();
+                if (message.parentElement) {
+                    message.remove();
+                }
             }, 300);
         }, 5000);
     });
@@ -94,9 +97,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCategoryColors() {
         const categoryBadges = document.querySelectorAll('.category-badge');
         categoryBadges.forEach(badge => {
-            const category = badge.textContent.toLowerCase();
+            const category = badge.textContent.toLowerCase().trim();
             badge.className = 'category-badge'; // Reset classes
-            badge.classList.add(`category-${category}`);
+            
+            if (category.includes('work')) {
+                badge.classList.add('category-work');
+            } else if (category.includes('school') || category.includes('education')) {
+                badge.classList.add('category-school');
+            } else if (category.includes('personal') || category.includes('home')) {
+                badge.classList.add('category-personal');
+            } else {
+                // Default category
+                badge.classList.add('category-work');
+            }
         });
     }
 
@@ -131,12 +144,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const taskItems = document.querySelectorAll('.task-item');
             
             taskItems.forEach(item => {
-                const taskCategory = item.querySelector('.category-badge').textContent.toLowerCase();
-                
-                if (selectedCategory === '' || taskCategory === selectedCategory.toLowerCase()) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
+                const categoryBadge = item.querySelector('.category-badge');
+                if (categoryBadge) {
+                    const taskCategory = categoryBadge.textContent.toLowerCase().trim();
+                    
+                    if (selectedCategory === '' || taskCategory.includes(selectedCategory.toLowerCase())) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
                 }
             });
         });
@@ -146,11 +162,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function animateProgressBars() {
         const progressBars = document.querySelectorAll('.progress-bar');
         progressBars.forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0';
-            setTimeout(() => {
-                bar.style.width = width;
-            }, 100);
+            const width = bar.style.width || bar.getAttribute('data-width');
+            if (width) {
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            }
         });
     }
 
@@ -165,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const counter = document.createElement('div');
             counter.className = 'char-counter';
             counter.style.fontSize = '0.875rem';
-            counter.style.color = '#6c757d';
+            counter.style.color = 'var(--text-light)';
             counter.style.textAlign = 'right';
             counter.style.marginTop = '0.5rem';
             
@@ -177,8 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (currentLength > maxLength * 0.9) {
                     counter.style.color = 'var(--warning-color)';
+                } else if (currentLength > maxLength) {
+                    counter.style.color = 'var(--danger-color)';
                 } else {
-                    counter.style.color = '#6c757d';
+                    counter.style.color = 'var(--text-light)';
                 }
             }
             
@@ -201,51 +221,109 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Helper function to show messages
-    function showMessage(text, type = 'info') {
-        // Remove existing custom messages
-        const existingMessages = document.querySelectorAll('.custom-message');
-        existingMessages.forEach(msg => msg.remove());
-        
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message custom-message ${type}`;
-        messageDiv.textContent = text;
-        messageDiv.style.marginBottom = '1rem';
-        
-        const mainContent = document.querySelector('main .container');
-        if (mainContent) {
-            mainContent.insertBefore(messageDiv, mainContent.firstChild);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                messageDiv.style.opacity = '0';
-                messageDiv.style.transform = 'translateY(-10px)';
-                setTimeout(() => {
-                    messageDiv.remove();
-                }, 300);
-            }, 5000);
-        }
-    }
+    // Welcome message animation
+    const welcome = document.getElementById('welcome-message');
+    if (welcome) {
+        // Fade in after 0.5s
+        setTimeout(() => {
+            welcome.classList.add('show');
+        }, 500);
 
-    // Add shake animation CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        .shake {
-            animation: shake 0.5s ease-in-out;
-        }
-        .progress-bar {
-            transition: width 1s ease-in-out;
-        }
-    `;
-    document.head.appendChild(style);
+        // Fade out after 4s
+        setTimeout(() => {
+            welcome.classList.remove('show');
+            // Remove from DOM after animation
+            setTimeout(() => {
+                if (welcome.parentElement) {
+                    welcome.remove();
+                }
+            }, 1000);
+        }, 4500);
+    }
 
     console.log('All JavaScript features initialized');
 });
+
+// Theme initialization function
+function initializeTheme() {
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+        // Check for saved theme preference on load
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Set initial theme
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '☀️';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            themeToggle.innerHTML = '🌙';
+        }
+
+        // Theme toggle event listener
+        themeToggle.addEventListener('click', () => {
+            const htmlElement = document.documentElement;
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update button icon
+            themeToggle.innerHTML = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+    }
+}
+
+// Helper function to show messages
+function showMessage(text, type = 'info') {
+    // Remove existing custom messages
+    const existingMessages = document.querySelectorAll('.custom-message');
+    existingMessages.forEach(msg => {
+        if (msg.parentElement) {
+            msg.remove();
+        }
+    });
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message custom-message ${type}`;
+    messageDiv.textContent = text;
+    messageDiv.style.marginBottom = '1rem';
+    
+    const mainContent = document.querySelector('main .container');
+    if (mainContent) {
+        mainContent.insertBefore(messageDiv, mainContent.firstChild);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 300);
+        }, 5000);
+    }
+}
+
+// Add shake animation CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    .shake {
+        animation: shake 0.5s ease-in-out;
+    }
+    .progress-bar {
+        transition: width 1s ease-in-out;
+    }
+`;
+document.head.appendChild(style);
 
 // Utility function for making AJAX requests (if needed later)
 function makeRequest(url, method = 'GET', data = null) {
@@ -279,18 +357,3 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const welcome = document.getElementById('welcome-message');
-    if (welcome) {
-        // Fade in after 0.5s
-        setTimeout(() => {
-            welcome.classList.add('show');
-        }, 500);
-
-        // Fade out after 4s
-        setTimeout(() => {
-            welcome.classList.remove('show');
-        }, 4500);
-    }
-});
