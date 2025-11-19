@@ -294,3 +294,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 4500);
     }
 });
+
+
+
+document.getElementById('addTaskBtn').addEventListener('click', addTask);
+
+function addTask() {
+  const taskInput = document.getElementById('taskInput');
+  const prioritySelect = document.getElementById('prioritySelect');
+
+  const taskText = taskInput.value.trim();
+  const priority = prioritySelect.value;
+
+  if (!taskText) return; // Prevent adding empty tasks
+
+  const li = document.createElement('li');
+  li.textContent = taskText;
+  li.classList.add('task', priority); // add color class
+
+  document.getElementById('taskList').appendChild(li);
+
+  // Clear input
+  taskInput.value = '';
+  prioritySelect.value = 'low';
+}

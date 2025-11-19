@@ -1,4 +1,5 @@
 /* ===== ELEGANT COLOR SCHEME ===== */
+
 :root {
     --primary-color: #a78bfa;      /* Soft lavender */
     --secondary-color: #c4b5fd;    /* Light lavender */
@@ -711,6 +712,9 @@ button, .btn, input[type="submit"] {
   cursor: pointer;
 }
 
+
+
+
 #welcome-message {
   background-color: #ffb6c1;
   color: purple;
@@ -742,3 +746,46 @@ button, .btn, input[type="submit"] {
 
 
 
+#task-container {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+#taskInput {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#prioritySelect {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#addTaskBtn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #8a2be2;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#taskList {
+  list-style: none;
+  padding: 0;
+}
+
+.task.low { color: green; }
+.task.medium { color: orange; }
+.task.high { color: red; }
+
+.task {
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  background-color: #f2f2f2;
+}

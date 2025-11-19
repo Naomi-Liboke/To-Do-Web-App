@@ -23,9 +23,7 @@
                         <li><a href="{% url 'login' %}">Login💻</a></li>
                         <li><a href="{% url 'register' %}">Register</a></li>
                     {% endif %}
-                    <li>
-                        <button id="dark-mode-toggle" class="dark-mode-btn">🌙</button>
-                    </li>
+                    
                 </ul>
             </nav>
         </div>
@@ -33,7 +31,7 @@
 
     <main>
         <div class="container">
-            <div id="welcome-message">🌸 Welcome to your To-Do App 🌼</div>
+            <div id="welcome-message">🌸 Welcome to My To-Do App 🌼</div>
 
             {% block content %}
             <!-- Page-specific content will go here -->
@@ -41,31 +39,35 @@
         </div>
     </main>
 
+</div>
+
+<ul id="taskList"></ul>
+
+
     <footer>
         <div class="container">
             <p>&copy; 2025 Django To-Do App. All rights reserved.</p>
         </div>
     </footer>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const welcome = document.getElementById("welcome-message");
 
-    <!-- JS -->
-    <script src="{% static 'to_do_app/js/main.js' %}"></script>
+        if (welcome) {
+            // Fade in
+            setTimeout(() => {
+                welcome.classList.add("show");
+            }, 300);
 
-    <!-- Inline Dark Mode JS -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggle = document.getElementById('dark-mode-toggle');
+            // Fade out after 3 seconds
+            setTimeout(() => {
+                welcome.classList.remove("show");
+            }, 3000);
 
-        if (toggle) {
-            toggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-mode');
-
-                // Change icon
-                if (document.body.classList.contains('dark-mode')) {
-                    toggle.textContent = '☀️';
-                } else {
-                    toggle.textContent = '🌙';
-                }
-            });
+            // Remove from page completely
+            setTimeout(() => {
+                welcome.style.display = "none";
+            }, 4000);
         }
     });
     </script>
