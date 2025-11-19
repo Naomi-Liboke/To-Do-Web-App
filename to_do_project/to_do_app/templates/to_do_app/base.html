@@ -15,17 +15,19 @@
             <nav class="navbar">
                 <div class="logo">To-Do List App</div>
                 <ul class="nav-links">
-                    <li><a href="{% url 'task_list' %}">Home</a></li>
-                    <li><a href="{% url 'add_task' %}">Add Task</a></li>
                     {% if user.is_authenticated %}
+                        <li><a href="{% url 'task_list' %}">Home</a></li>
+                        <li><a href="{% url 'add_task' %}">Add Task</a></li>
                         <li><a href="{% url 'logout' %}">Logout</a></li>
+                        <li>
+                            <button class="dark-mode-btn" aria-label="Toggle dark mode">
+                                ☀️
+                            </button>
+                        </li>
                     {% else %}
-                        <li><a href="{% url 'login' %}">Login💻</a></li>
-                        <li><a href="{% url 'register' %}">Register</a></li>
+                        <li><a href="{% url 'login' %}">Login 🔑</a></li>
+                        <li><a href="{% url 'register' %}">Register 📝</a></li>
                     {% endif %}
-                    <li>
-                        <button id="dark-mode-toggle" class="dark-mode-btn">🌙</button>
-                    </li>
                 </ul>
             </nav>
         </div>
@@ -33,42 +35,48 @@
 
     <main>
         <div class="container">
-            <div id="welcome-message">🌸 Welcome to your To-Do App 🌼</div>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             {% block content %}
-            <!-- Page-specific content will go here -->
             {% endblock %}
         </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Django To-Do App. All rights reserved.</p>
+            <p>&copy; {% now "Y" %} To-Do List App. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- JS -->
     <script src="{% static 'to_do_app/js/main.js' %}"></script>
-
-    <!-- Inline Dark Mode JS -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggle = document.getElementById('dark-mode-toggle');
-
-        if (toggle) {
-            toggle.addEventListener('click', function() {
+        // Dark mode toggle functionality
+        const darkModeBtn = document.querySelector('.dark-mode-btn');
+        if (darkModeBtn) {
+            darkModeBtn.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-
-                // Change icon
+                // I might want to save this preference in localStorage
                 if (document.body.classList.contains('dark-mode')) {
-                    toggle.textContent = '☀️';
+                    localStorage.setItem('darkMode', 'enabled');
+                    darkModeBtn.innerHTML = '🌙'; // Change icon to moon
                 } else {
-                    toggle.textContent = '🌙';
+                    localStorage.setItem('darkMode', 'disabled');
+                    darkModeBtn.innerHTML = '☀️'; // Change icon to sun
                 }
             });
-        }
-    });
-    </script>
 
+            // Check for saved dark mode preference on load
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeBtn.innerHTML = '🌙';
+            }
+        }
+    </script>
 </body>
 </html>
