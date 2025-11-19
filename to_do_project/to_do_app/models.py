@@ -2,43 +2,49 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-class Task(models.Model):
-    # Each task belongs to a user
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+STATUS_CHOICES = [
+    ('pending', 'Pending'),
+    ('in_progress', 'In Progress'),
+    ('completed', 'Completed'),
+]
 
-    # Task details
+CATEGORY_CHOICES = [
+    ('Work', 'Work'),
+    ('School', 'School'),
+    ('Personal', 'Personal'),
+]
+
+class Task(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-
-    # Task category
-    CATEGORY_CHOICES = [
-        ('Work', 'Work'),
-        ('School', 'School'),
-        ('Personal', 'Personal'),
-    ]
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
-    # Task status
-    completed = models.BooleanField(default=False)
-    completed_at = models.DateTimeField(null=True, blank=True)
-
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
 
-    # String representation
     def __str__(self):
-        return f"{self.title} ({'Done' if self.completed else 'Pending'})"
+        return f"{self.title} ({self.get_status_display()})"
 
-    # Toggle task status
+    # Toggle between pending/completed
     def toggle_status(self):
-        self.completed = not self.completed
-        self.completed_at = timezone.now() if self.completed else None
+        if self.status == 'completed':
+            self.status = 'pending'
+            self.completed_at = None
+        else:
+            self.status = 'completed'
+            self.completed_at = timezone.now()
         self.save()
 
-    # Count tasks completed today (class method for dashboard)
     @classmethod
     def completed_today(cls, user):
         today = timezone.now().date()
-        return cls.objects.filter(user=user, completed=True, completed_at__date=today).count()
+        return cls.objects.filter(
+            user=user,
+            status='completed',
+            completed_at__date=today
+        ).count()
+
 
