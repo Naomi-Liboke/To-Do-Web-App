@@ -451,3 +451,64 @@ footer {
 .align-center { align-items: center; }
 .gap-1 { gap: 0.5rem; }
 .gap-2 { gap: 1rem; }
+
+/* ===== SPECIAL EFFECTS ===== */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--gradient-primary);
+    animation: confetti 5s linear forwards;
+    pointer-events: none;
+}
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+.pulse-soft {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+button, .btn, input[type="submit"] {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+#welcome-message {
+  background-color: #ffb6c1;
+  color: purple;
+  text-align: center;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 1s ease, transform 1s ease;
+  position: relative;
+  top: 10px;
+}
+
+#welcome-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Dark purple borders for main content */
+.container {
+    border: 3px solid #4B0082; /* Dark purple */
+    border-radius: 15px;        /* Rounded corners */
+    padding: 20px;              /* Space inside the box */
+    margin-top: 20px;           /* Space from top of page */
+    box-shadow: 0 4px 10px rgba(75, 0, 130, 0.3); /* Optional shadow */
+}
+
+
+
