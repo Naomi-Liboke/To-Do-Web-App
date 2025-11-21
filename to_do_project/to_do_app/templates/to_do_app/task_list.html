@@ -3,54 +3,24 @@
 {% block content %}
 <h1 class="page-title">My Tasks</h1>
 
-<!-- Progress Dashboard -->
-<div class="dashboard">
-    <div class="stat-card">
-        <div class="stat-value">{{ completed_today }}</div>
-        <div class="stat-label">Tasks Completed Today</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ total_tasks }}</div>
-        <div class="stat-label">Total Tasks</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">{{ pending_tasks }}</div>
-        <div class="stat-label">Pending Tasks</div>
-    </div>
-</div>
-
-<!-- Task List -->
 <div class="card">
     <ul class="task-list">
         {% for task in tasks %}
-        <li class="task-item {% if task.status == 'completed' %}task-completed{% endif %}">
+        <li class="task-item">
             <div class="task-info">
                 <div class="task-title">{{ task.title }}</div>
                 <div class="task-meta">
                     <span class="category-badge category-{{ task.category|lower }}">{{ task.category }}</span>
-
-                    <!-- Task Status -->
-                    <span class="task-status">Status: {{ task.get_status_display }}</span>
-                </div>
+                    
+                    <span class="status-badge status-{{ task.status|lower }}">
+                        Status: {{ task.get_status_display }}
+                    </span>
+                    </div>
             </div>
 
             <div class="task-actions">
                 <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-secondary">Edit</a>
 
-                <!-- Toggle completed/pending -->
-                <form method="post" action="{% url 'toggle_task' task.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit"
-                        class="btn btn-sm {% if task.status == 'completed' %}btn-warning{% else %}btn-success{% endif %}">
-                        {% if task.status == 'completed' %}
-                            Mark as Pending
-                        {% else %}
-                            Mark as Completed
-                        {% endif %}
-                    </button>
-                </form>
-
-                <!-- Delete -->
                 <form method="post" action="{% url 'delete_task' task.id %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
@@ -59,7 +29,6 @@
                 </form>
             </div>
         </li>
-
         {% empty %}
         <li class="text-center" style="padding: 2rem;">
             No tasks yet. <a href="{% url 'add_task' %}">Add your first task</a>

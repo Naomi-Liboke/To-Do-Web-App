@@ -1,5 +1,4 @@
 /* ===== ELEGANT COLOR SCHEME ===== */
-
 :root {
     --primary-color: #a78bfa;      /* Soft lavender */
     --secondary-color: #c4b5fd;    /* Light lavender */
@@ -712,9 +711,6 @@ button, .btn, input[type="submit"] {
   cursor: pointer;
 }
 
-
-
-
 #welcome-message {
   background-color: #ffb6c1;
   color: purple;
@@ -745,47 +741,26 @@ button, .btn, input[type="submit"] {
 }
 
 
-
-#task-container {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
+/* Add this to your main CSS file */
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-left: 10px;
+    color: white; /* Default text color */
 }
 
-#taskInput {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+/* Color codes for different statuses */
+.status-todo {
+    background-color: #ffc107; /* Yellow */
+    color: #333;
 }
 
-#prioritySelect {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.status-in_progress {
+    background-color: #17a2b8; /* Blue-green */
 }
 
-#addTaskBtn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  background-color: #8a2be2;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-#taskList {
-  list-style: none;
-  padding: 0;
-}
-
-.task.low { color: green; }
-.task.medium { color: orange; }
-.task.high { color: red; }
-
-.task {
-  padding: 6px 10px;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  background-color: #f2f2f2;
+.status-complete {
+    background-color: #28a745; /* Green */
 }

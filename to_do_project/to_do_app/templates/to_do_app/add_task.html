@@ -1,7 +1,7 @@
 {% extends 'to_do_app/base.html' %}
 
 {% block content %}
-<h1 class="page-title">Add New Task</h1>
+<h1 class="page-title">Status track</h1>
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
     <form method="post">
@@ -23,17 +23,15 @@
                 <option value="Personal">Personal</option>
             </select>
         </div>
-
-        <!-- STATUS FIELD -->
+        
         <div class="form-group">
             <label for="status">Status</label>
             <select id="status" name="status" required>
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
+                <option value="TODO">To Do</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETE ✅">Complete</option>
             </select>
         </div>
-
         <div class="d-flex justify-between">
             <button type="submit" class="btn">Add Task</button>
             <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>

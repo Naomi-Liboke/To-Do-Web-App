@@ -1,7 +1,5 @@
 // JavaScript for Django To-Do App
 
-
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Django To-Do App JavaScript loaded');
 
@@ -90,18 +88,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // Category color coding
-    function updateCategoryColors() {
+    // NEW FUNCTIONALITY: Update category AND status colors
+    function updateTaskBadges() {
+        // 1. Handle Category Colors (Existing Logic)
         const categoryBadges = document.querySelectorAll('.category-badge');
         categoryBadges.forEach(badge => {
             const category = badge.textContent.toLowerCase();
             badge.className = 'category-badge'; // Reset classes
             badge.classList.add(`category-${category}`);
         });
+
+        // 2. Handle Status Colors (NEW LOGIC)
+        // We target the new status badge we added in task_list.html
+        const statusBadges = document.querySelectorAll('.status-badge');
+        statusBadges.forEach(badge => {
+            // Find the class indicating status (e.g., status-todo)
+            const statusClass = Array.from(badge.classList).find(cls => cls.startsWith('status-'));
+            
+            if (statusClass) {
+                // Remove previous color classes if any
+                badge.classList.remove('status-color-todo', 'status-color-in_progress', 'status-color-complete');
+                
+                // Get the status key (e.g., 'todo')
+                const statusKey = statusClass.split('-')[1]; 
+                
+                // Add the appropriate color class based on the status key
+                badge.classList.add(`status-color-${statusKey}`);
+            }
+        });
     }
 
-    // Initialize category colors
-    updateCategoryColors();
+    // Initialize category and status colors
+    // We are replacing the old updateCategoryColors() call with the new function.
+    updateTaskBadges(); 
 
     // Task search functionality
     const searchInput = document.querySelector('#task-search');
@@ -294,27 +313,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 4500);
     }
 });
-
-
-
-document.getElementById('addTaskBtn').addEventListener('click', addTask);
-
-function addTask() {
-  const taskInput = document.getElementById('taskInput');
-  const prioritySelect = document.getElementById('prioritySelect');
-
-  const taskText = taskInput.value.trim();
-  const priority = prioritySelect.value;
-
-  if (!taskText) return; // Prevent adding empty tasks
-
-  const li = document.createElement('li');
-  li.textContent = taskText;
-  li.classList.add('task', priority); // add color class
-
-  document.getElementById('taskList').appendChild(li);
-
-  // Clear input
-  taskInput.value = '';
-  prioritySelect.value = 'low';
-}

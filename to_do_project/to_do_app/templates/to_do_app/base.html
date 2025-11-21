@@ -14,33 +14,18 @@
         <div class="container">
             <nav class="navbar">
                 <div class="logo">To-Do List App</div>
-
                 <ul class="nav-links">
-
+                    <li><a href="{% url 'task_list' %}">Home</a></li>
+                    <li><a href="{% url 'add_task' %}">Add Task</a></li>
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'task_list' %}">Home</a></li>
-                        <li><a href="{% url 'add_task' %}">Add Task</a></li>
-
-                        <!-- 🔥 STATUS COUNTERS IN NAVBAR -->
-                        <li style="font-size: 14px; font-weight: bold; color: #ff69b4;">
-                            ✔ {{ completed_today }} |
-                            📌 {{ total_tasks }} |
-                            ⏳ {{ pending_tasks }}
-                        </li>
-
                         <li><a href="{% url 'logout' %}">Logout</a></li>
-
-                        <li>
-                            <button class="dark-mode-btn" aria-label="Toggle dark mode">
-                                ☀️
-                            </button>
-                        </li>
-
                     {% else %}
-                        <li><a href="{% url 'login' %}">Login 🔑</a></li>
-                        <li><a href="{% url 'register' %}">Register 📝</a></li>
+                        <li><a href="{% url 'login' %}">Login💻</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
                     {% endif %}
-
+                    <li>
+                        <button id="dark-mode-toggle" class="dark-mode-btn">🌙</button>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -48,34 +33,42 @@
 
     <main>
         <div class="container">
-            <div id="welcome-message">🌸 Welcome to My To-Do App 🌼</div>
+            <div id="welcome-message">🌸 Welcome to your To-Do App 🌼</div>
 
             {% block content %}
+            <!-- Page-specific content will go here -->
             {% endblock %}
         </div>
     </main>
 
-</div>
-
-<ul id="taskList"></ul>
-
     <footer>
         <div class="container">
-            <p>&copy; {% now "Y" %} To-Do List App. All rights reserved.</p>
+            <p>&copy; 2025 Django To-Do App. All rights reserved.</p>
         </div>
     </footer>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const welcome = document.getElementById("welcome-message");
+    <!-- JS -->
+    <script src="{% static 'to_do_app/js/main.js' %}"></script>
 
-        if (welcome) {
-            setTimeout(() => welcome.classList.add("show"), 300);
-            setTimeout(() => welcome.classList.remove("show"), 3000);
-            setTimeout(() => welcome.style.display = "none", 4000);
+    <!-- Inline Dark Mode JS -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('dark-mode-toggle');
+
+        if (toggle) {
+            toggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+
+                // Change icon
+                if (document.body.classList.contains('dark-mode')) {
+                    toggle.textContent = '☀️';
+                } else {
+                    toggle.textContent = '🌙';
+                }
+            });
         }
     });
-</script>
+    </script>
 
 </body>
 </html>

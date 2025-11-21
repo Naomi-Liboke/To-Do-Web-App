@@ -3,35 +3,36 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.utils import timezone
 from .models import Task
-
-# -------------------------
-# AUTH VIEWS
-# -------------------------
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('task_list')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
             messages.success(request, f'Welcome back, {user.username}!')
             return redirect('task_list')
         messages.error(request, 'Invalid username or password.')
+
     return render(request, 'to_do_app/login.html')
+
 
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('task_list')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
+
         if not username or not email or not password1:
             messages.error(request, 'All fields are required.')
         elif password1 != password2:
@@ -43,41 +44,33 @@ def register_view(request):
         elif len(password1) < 6:
             messages.error(request, 'Password must be at least 6 characters.')
         else:
-            user = User.objects.create_user(username=username, email=email, password=password1)
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1
+            )
             login(request, user)
             messages.success(request, f'Account created for {user.username}!')
             return redirect('task_list')
+
     return render(request, 'to_do_app/register.html')
+
 
 def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('login')
 
-# -------------------------
-# TASK VIEWS
-# -------------------------
 
 @login_required(login_url='/login/')
 def task_list(request):
     tasks = Task.objects.filter(user=request.user).order_by('-created_at')
-    
-    # Dashboard stats
-    total_tasks = tasks.count()
-    pending_tasks = tasks.exclude(status='completed').count()
-    completed_today = Task.objects.filter(
-        user=request.user,
-        status='completed',
-        completed_at__date=timezone.now().date()
-    ).count()
 
     context = {
         'tasks': tasks,
-        'total_tasks': total_tasks,
-        'pending_tasks': pending_tasks,
-        'completed_today': completed_today,
     }
     return render(request, 'to_do_app/task_list.html', context)
+
 
 @login_required(login_url='/login/')
 def add_task(request):
@@ -85,21 +78,20 @@ def add_task(request):
         title = request.POST.get('title')
         description = request.POST.get('description')
         category = request.POST.get('category')
-        status = request.POST.get('status', 'pending')  # default to pending
 
         if title:
             Task.objects.create(
                 user=request.user,
                 title=title,
                 description=description,
-                category=category,
-                status=status
+                category=category
             )
             messages.success(request, 'Task added successfully!')
             return redirect('task_list')
         messages.error(request, 'Task title is required.')
 
     return render(request, 'to_do_app/add_task.html')
+
 
 @login_required(login_url='/login/')
 def edit_task(request, task_id):
@@ -109,28 +101,19 @@ def edit_task(request, task_id):
         task.title = request.POST.get('title')
         task.description = request.POST.get('description')
         task.category = request.POST.get('category')
-        task.status = request.POST.get('status')
-        # Update completed_at if status changed to completed
-        if task.status == 'completed' and not task.completed_at:
-            task.completed_at = timezone.now()
-        elif task.status != 'completed':
-            task.completed_at = None
         task.save()
+
         messages.success(request, 'Task updated successfully!')
         return redirect('task_list')
 
     return render(request, 'to_do_app/edit_task.html', {'task': task})
 
+
 @login_required(login_url='/login/')
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
     task.delete()
-    messages.success(request, 'Task deleted successfully.')
+    messages.success(request, 'Task deleted successfully!')
     return redirect('task_list')
 
-@login_required(login_url='/login/')
-def toggle_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id, user=request.user)
-    task.toggle_status()  # Use model method to toggle and update completed_at
-    messages.success(request, f'Task status updated!')
-    return redirect('task_list')
+  
