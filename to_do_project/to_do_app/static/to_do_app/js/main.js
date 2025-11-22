@@ -3,9 +3,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Django To-Do App JavaScript loaded');
 
-    // Initialize theme system first
+    // Initialize theme system first - with improved reliability
     initializeTheme();
 
+    // Rest of your existing code remains the same...
     // Mark task as completed/pending (frontend only - for visual feedback)
     const completeButtons = document.querySelectorAll('.complete-btn');
     completeButtons.forEach(button => {
@@ -244,36 +245,110 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('All JavaScript features initialized');
 });
 
-// Theme initialization function
+// IMPROVED Theme initialization function
 function initializeTheme() {
+    console.log('Initializing theme system...');
+    
+    // Apply theme immediately based on saved preference or system preference
+    applyStoredTheme();
+    
+    // Set up theme toggle with event delegation for better reliability
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.theme-toggle')) {
+            toggleTheme();
+        }
+    });
+    
+    // Also set up direct event listener for immediate response
     const themeToggle = document.querySelector('.theme-toggle');
     if (themeToggle) {
-        // Check for saved theme preference on load
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        // Set initial theme
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.innerHTML = '☀️';
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            themeToggle.innerHTML = '🌙';
-        }
-
-        // Theme toggle event listener
-        themeToggle.addEventListener('click', () => {
-            const htmlElement = document.documentElement;
-            const currentTheme = htmlElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            htmlElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update button icon
-            themeToggle.innerHTML = newTheme === 'dark' ? '☀️' : '🌙';
-        });
+        console.log('Theme toggle button found, setting up direct listener');
+        themeToggle.addEventListener('click', toggleTheme);
+    } else {
+        console.log('Theme toggle button not found on initial load');
+        // Try again after a short delay in case the button loads later
+        setTimeout(() => {
+            const retryToggle = document.querySelector('.theme-toggle');
+            if (retryToggle) {
+                console.log('Theme toggle button found on retry');
+                retryToggle.addEventListener('click', toggleTheme);
+                updateThemeIcon(); // Ensure icon is correct
+            }
+        }, 100);
     }
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        // Only apply system theme if no manual preference is stored
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            updateThemeIcon();
+        }
+    });
+}
+
+// Separate function to apply stored theme
+function applyStoredTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    let themeToApply;
+    
+    if (savedTheme) {
+        themeToApply = savedTheme;
+        console.log('Using saved theme:', savedTheme);
+    } else if (prefersDark) {
+        themeToApply = 'dark';
+        console.log('Using system dark theme preference');
+    } else {
+        themeToApply = 'light';
+        console.log('Using default light theme');
+    }
+    
+    document.documentElement.setAttribute('data-theme', themeToApply);
+    updateThemeIcon();
+}
+
+// Separate function to toggle theme
+function toggleTheme() {
+    console.log('Theme toggle clicked');
+    const htmlElement = document.documentElement;
+    const currentTheme = htmlElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    console.log('Switching theme from', currentTheme, 'to', newTheme);
+    
+    // Apply new theme
+    htmlElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Update button icon with animation
+    updateThemeIcon();
+    
+    // Add visual feedback
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+        themeToggle.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+            themeToggle.style.transform = 'scale(1)';
+        }, 150);
+    }
+}
+
+// Separate function to update theme icon
+function updateThemeIcon() {
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (!themeToggle) {
+        console.log('Theme toggle button not found for icon update');
+        return;
+    }
+    
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newIcon = currentTheme === 'dark' ? '☀️' : '🌙';
+    
+    console.log('Updating theme icon to:', newIcon);
+    themeToggle.innerHTML = newIcon;
 }
 
 // Helper function to show messages
@@ -322,6 +397,11 @@ style.textContent = `
     .progress-bar {
         transition: width 1s ease-in-out;
     }
+    
+    /* Theme toggle animation */
+    .theme-toggle {
+        transition: all 0.3s ease;
+    }
 `;
 document.head.appendChild(style);
 
@@ -357,3 +437,15 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Debug function to check theme status
+function debugTheme() {
+    console.log('Current theme:', document.documentElement.getAttribute('data-theme'));
+    console.log('Saved theme:', localStorage.getItem('theme'));
+    console.log('System prefers dark:', window.matchMedia('(prefers-color-scheme: dark)').matches);
+    console.log('Theme toggle found:', document.querySelector('.theme-toggle') !== null);
+}
+
+// Make debug function available globally for testing
+window.debugTheme = debugTheme;
+

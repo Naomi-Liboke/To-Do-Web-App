@@ -22,6 +22,9 @@ class Task(models.Model):
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
 
+    # Due date for scheduling
+    due_date = models.DateField(null=True, blank=True)
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,9 +39,57 @@ class Task(models.Model):
         self.completed_at = timezone.now() if self.completed else None
         self.save()
 
+    # Check if task is overdue
+    def is_overdue(self):
+        if self.due_date and not self.completed:
+            return self.due_date < timezone.now().date()
+        return False
+
+    # Days until due (positive = days left, negative = days overdue)
+    def days_until_due(self):
+        if self.due_date:
+            delta = self.due_date - timezone.now().date()
+            return delta.days
+        return None
+
+    # Get due status text
+    def get_due_status(self):
+        if not self.due_date:
+            return "No due date"
+        if self.completed:
+            return "Completed"
+        days = self.days_until_due()
+        if days < 0:
+            return f"Overdue by {-days} days"
+        elif days == 0:
+            return "Due today"
+        elif days == 1:
+            return "Due tomorrow"
+        else:
+            return f"Due in {days} days"
+
     # Count tasks completed today (class method for dashboard)
     @classmethod
     def completed_today(cls, user):
         today = timezone.now().date()
         return cls.objects.filter(user=user, completed=True, completed_at__date=today).count()
 
+    # Count overdue tasks
+    @classmethod
+    def overdue_count(cls, user):
+        today = timezone.now().date()
+        return cls.objects.filter(
+            user=user, 
+            completed=False, 
+            due_date__lt=today
+        ).count()
+
+    # Count tasks due today
+    @classmethod
+    def due_today_count(cls, user):
+        today = timezone.now().date()
+        return cls.objects.filter(
+            user=user, 
+            completed=False, 
+            due_date=today
+        ).count()

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from .models import Task
+from django.db.models import Q 
 
 def login_view(request):
     # If user is already logged in, redirect to task list
@@ -71,20 +72,41 @@ def logout_view(request):
 
 @login_required(login_url='/login/')
 def task_list(request):
+    # Get search query and category filter from URL parameters
+    search_query = request.GET.get('q', '')
+    category_filter = request.GET.get('category', '')
+    
     # Get tasks for the current user
     tasks = Task.objects.filter(user=request.user).order_by('-created_at')
     
-    # Calculate stats
+    # Apply search filter if query exists
+    if search_query:
+        tasks = tasks.filter(
+            Q(title__icontains=search_query) | 
+            Q(description__icontains=search_query)
+        )
+    
+    # Apply category filter if selected
+    if category_filter:
+        tasks = tasks.filter(category__iexact=category_filter)
+    
+    # Calculate stats (these will reflect the filtered tasks)
     total_tasks = tasks.count()
     completed_tasks = tasks.filter(completed=True).count()
     pending_tasks = total_tasks - completed_tasks
     completed_today = Task.completed_today(request.user)
+    
+    # Get unique categories for the filter dropdown
+    categories = Task.objects.filter(user=request.user).values_list('category', flat=True).distinct()
     
     context = {
         'tasks': tasks,
         'completed_today': completed_today,
         'total_tasks': total_tasks,
         'pending_tasks': pending_tasks,
+        'search_query': search_query,
+        'category_filter': category_filter,
+        'categories': categories,
     }
     return render(request, 'to_do_app/task_list.html', context)
 
@@ -94,13 +116,15 @@ def add_task(request):
         title = request.POST.get('title')
         description = request.POST.get('description')
         category = request.POST.get('category')
+        due_date = request.POST.get('due_date')  # Get due date from form
         
         if title:  # Basic validation
             Task.objects.create(
                 user=request.user,
                 title=title,
                 description=description,
-                category=category
+                category=category,
+                due_date=due_date if due_date else None  # Add due date
             )
             messages.success(request, 'Task added successfully!')
             return redirect('task_list')
@@ -118,6 +142,7 @@ def edit_task(request, task_id):
         task.title = request.POST.get('title')
         task.description = request.POST.get('description')
         task.category = request.POST.get('category')
+        task.due_date = request.POST.get('due_date') if request.POST.get('due_date') else None  # Update due date
         task.save()
         
         messages.success(request, 'Task updated successfully!')
@@ -141,3 +166,25 @@ def toggle_task(request, task_id):
     status = "completed" if task.completed else "marked as pending"
     messages.success(request, f'Task {status}!')
     return redirect('task_list')
+
+@login_required(login_url='/login/')
+def calendar_view(request):
+    # Get tasks with due dates for the current user
+    tasks_with_due_dates = Task.objects.filter(
+        user=request.user,
+        due_date__isnull=False
+    ).order_by('due_date')
+    
+    # Get tasks by due date for calendar display
+    tasks_by_date = {}
+    for task in tasks_with_due_dates:
+        date_str = task.due_date.strftime('%Y-%m-%d')
+        if date_str not in tasks_by_date:
+            tasks_by_date[date_str] = []
+        tasks_by_date[date_str].append(task)
+    
+    context = {
+        'tasks_with_due_dates': tasks_with_due_dates,
+        'tasks_by_date': tasks_by_date,
+    }
+    return render(request, 'to_do_app/calendar.html', context)
