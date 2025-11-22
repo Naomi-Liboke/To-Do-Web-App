@@ -4,7 +4,7 @@
 <h1 class="page-title">Edit Task</h1>
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
             <label for="title"> Title</label>
@@ -36,9 +36,33 @@
                 Schedule when this task should be completed
             </small>
         </div>
+
+        <div class="form-group">
+            <label for="attachment">📎 File Attachment (Optional)</label>
+
+            {% if task.attachment %}
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-color);">
+                Current file: 
+                <a href="{{ task.attachment.url }}" target="_blank" style="color: var(--primary-color); font-weight: 600;">
+                    {{ task.attachment.name|default:"View File" }}
+                </a>
+                <span style="color: var(--danger-color); font-size: 0.875rem; margin-left: 1rem;">(Uploading a new file will replace this one)</span>
+            </p>
+            {% else %}
+            <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">No file currently attached.</p>
+            {% endif %}
+
+            <input 
+                type="file" 
+                id="attachment" 
+                name="attachment" 
+                class="form-control"
+            >
+        </div>
+
         <div class="d-flex justify-between" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem;">
             <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                 Update Task
+                Update Task
             </button>
             <a href="{% url 'task_list' %}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
                 ✕ Cancel
@@ -47,3 +71,4 @@
     </form>
 </div>
 {% endblock %}
+

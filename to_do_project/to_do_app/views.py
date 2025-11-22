@@ -116,7 +116,10 @@ def add_task(request):
         title = request.POST.get('title')
         description = request.POST.get('description')
         category = request.POST.get('category')
-        due_date = request.POST.get('due_date')  # Get due date from form
+        due_date = request.POST.get('due_date')
+        
+        # New: Retrieve the uploaded file from request.FILES
+        attachment = request.FILES.get('attachment') # Correctly retrieve the file
         
         if title:  # Basic validation
             Task.objects.create(
@@ -124,7 +127,8 @@ def add_task(request):
                 title=title,
                 description=description,
                 category=category,
-                due_date=due_date if due_date else None  # Add due date
+                due_date=due_date if due_date else None,
+                attachment=attachment # Pass the file object to the model
             )
             messages.success(request, 'Task added successfully!')
             return redirect('task_list')
@@ -142,7 +146,17 @@ def edit_task(request, task_id):
         task.title = request.POST.get('title')
         task.description = request.POST.get('description')
         task.category = request.POST.get('category')
-        task.due_date = request.POST.get('due_date') if request.POST.get('due_date') else None  # Update due date
+        task.due_date = request.POST.get('due_date') if request.POST.get('due_date') else None 
+        
+        # Handle file upload/replacement
+        if 'attachment' in request.FILES:
+            # New file uploaded: update the attachment
+            task.attachment = request.FILES['attachment']
+        # Note: To remove an existing file, you would typically need an extra checkbox 
+        # or button in the template that signals the intention to clear the field.
+        # Without that, if the user submits the form without selecting a file, 
+        # the existing task.attachment value is preserved (due to not explicitly being set to None).
+        
         task.save()
         
         messages.success(request, 'Task updated successfully!')

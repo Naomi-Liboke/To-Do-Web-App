@@ -29,6 +29,14 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # New Field for File Attachment
+    # 'upload_to' specifies a subdirectory within your MEDIA_ROOT
+    attachment = models.FileField(
+        upload_to='task_attachments/', 
+        null=True, 
+        blank=True
+    )
+    
     # String representation
     def __str__(self):
         return f"{self.title} ({'Done' if self.completed else 'Pending'})"

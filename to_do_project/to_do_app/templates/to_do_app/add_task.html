@@ -4,7 +4,7 @@
 <h1 class="page-title">Add New Task</h1>
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data"> 
         {% csrf_token %}
         <div class="form-group">
             <label for="title"> Title</label>
@@ -35,6 +35,20 @@
                 Schedule when this task should be completed
             </small>
         </div>
+        
+        <div class="form-group">
+            <label for="attachment">📎 File Attachment (Optional)</label>
+            <input 
+                type="file" 
+                id="attachment" 
+                name="attachment" 
+                class="form-control"
+            >
+            <small style="color: var(--text-light); font-size: 0.875rem; margin-top: 0.5rem; display: block;">
+                Upload a document or image related to this task.
+            </small>
+        </div>
+        
         <div class="d-flex justify-between" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem;">
             <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
                 + Add Task
