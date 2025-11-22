@@ -23,17 +23,13 @@
                         <li><a href="{% url 'login' %}">Login💻</a></li>
                         <li><a href="{% url 'register' %}">Register</a></li>
                     {% endif %}
-                    <li>
-                        <button id="dark-mode-toggle" class="dark-mode-btn">🌙</button>
-                    </li>
-                </ul>
+
             </nav>
         </div>
     </header>
 
     <main>
         <div class="container">
-            <div id="welcome-message">🌸 Welcome to your To-Do App 🌼</div>
 
             {% block content %}
             <!-- Page-specific content will go here -->
@@ -47,10 +43,7 @@
         </div>
     </footer>
 
-    <!-- JS -->
-    <script src="{% static 'to_do_app/js/main.js' %}"></script>
 
-    <!-- Inline Dark Mode JS -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const toggle = document.getElementById('dark-mode-toggle');
