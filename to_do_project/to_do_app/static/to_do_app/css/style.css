@@ -741,26 +741,3 @@ button, .btn, input[type="submit"] {
 }
 
 
-/* Add this to your main CSS file */
-.status-badge {
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-left: 10px;
-    color: white; /* Default text color */
-}
-
-/* Color codes for different statuses */
-.status-todo {
-    background-color: #ffc107; /* Yellow */
-    color: #333;
-}
-
-.status-in_progress {
-    background-color: #17a2b8; /* Blue-green */
-}
-
-.status-complete {
-    background-color: #28a745; /* Green */
-}
