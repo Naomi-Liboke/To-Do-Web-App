@@ -8,260 +8,279 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'to_do_app/css/style.css' %}">
     <style>
-        /* Sidebar active state */
-        .nav-link.active {
-            background: var(--gradient-primary) !important;
-            color: white !important;
-            box-shadow: var(--box-shadow);
-        }
+    /* Sidebar active state */
+    .nav-link.active {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+        box-shadow: var(--box-shadow);
+    }
 
-        .nav-link:hover {
-            background: rgba(167, 139, 250, 0.1);
-            transform: translateX(5px);
-        }
+    .nav-link:hover {
+        background: rgba(167, 139, 250, 0.1);
+        transform: translateX(5px);
+    }
 
-        /* Status colors */
-        .btn-primary {
-            background: var(--gradient-primary) !important;
-            color: white !important;
-        }
+    /* Status colors */
+    .btn-primary {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+    }
 
-        .btn-secondary {
-            background: var(--gradient-secondary) !important;
-            color: white !important;
-        }
+    .btn-secondary {
+        background: var(--gradient-secondary) !important;
+        color: white !important;
+    }
 
-        .btn-success {
-            background: var(--gradient-primary) !important;
-            color: white !important;
-        }
+    .btn-success {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+    }
 
-        .btn-warning {
-            background: var(--gradient-secondary) !important;
-            color: white !important;
-        }
+    .btn-warning {
+        background: var(--gradient-secondary) !important;
+        color: white !important;
+    }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
-            color: white !important;
-        }
+    .btn-danger {
+        background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+        color: white !important;
+    }
 
-        /* Status badges */
-        .status-completed {
-            background: var(--gradient-primary) !important;
-            color: white !important;
-        }
+    /* Status badges */
+    .status-completed {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+    }
 
-        .status-pending {
-            background: var(--gradient-secondary) !important;
-            color: white !important;
-        }
+    .status-pending {
+        background: var(--gradient-secondary) !important;
+        color: white !important;
+    }
 
-        .category-badge {
-            background: var(--gradient-primary) !important;
-            color: white !important;
-        }
+    .category-badge {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+    }
 
-        /* Sidebar styles */
+    /* Sidebar styles */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 250px;
+        background: var(--card-bg);
+        box-shadow: var(--box-shadow);
+        padding: 2rem 1rem;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .sidebar-close {
+        display: none;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .sidebar-close button {
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(167, 139, 250, 0.2);
+    }
+
+    .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar-nav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: var(--border-radius-sm);
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .sidebar-footer {
+        position: absolute;
+        bottom: 2rem;
+        left: 0;
+        right: 0;
+        padding: 0 1rem;
+    }
+
+    .theme-toggle {
+        border: none;
+        border-radius: var(--border-radius-sm);
+        width: 100%;
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: var(--box-shadow);
+    }
+
+    .main-content {
+        margin-left: 250px;
+        min-height: 100vh;
+        background: var(--background-color);
+        transition: margin-left 0.3s ease;
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        align-items: center;
+    }
+
+    .mobile-menu-btn button {
+        border: none;
+        border-radius: var(--border-radius-sm);
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        color: white;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    header {
+        background: var(--card-bg);
+        border-bottom: none;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        box-shadow: 0 2px 10px rgba(167, 139, 250, 0.1);
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            width: 250px;
-            background: var(--card-bg);
-            box-shadow: var(--box-shadow);
-            padding: 2rem 1rem;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            overflow-y: auto;
+            transform: translateX(-100%);
+            width: 280px;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .main-content {
+            margin-left: 0 !important;
+        }
+        
+        .mobile-menu-btn {
+            display: flex !important;
         }
 
         .sidebar-close {
-            display: none;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-        }
-
-        .sidebar-close button {
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid rgba(167, 139, 250, 0.2);
-        }
-
-        .logo {
-            font-size: 1.75rem;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-nav {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-nav li {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 1.25rem;
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: var(--border-radius-sm);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 2rem;
-            left: 0;
-            right: 0;
-            padding: 0 1rem;
-        }
-
-        .theme-toggle {
-            border: none;
-            border-radius: var(--border-radius-sm);
-            width: 100%;
-            padding: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-            color: white;
-            transition: all 0.3s ease;
-            box-shadow: var(--box-shadow);
-        }
-
-        .main-content {
-            margin-left: 250px;
-            min-height: 100vh;
-            background: var(--background-color);
-            transition: margin-left 0.3s ease;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            align-items: center;
-        }
-
-        .mobile-menu-btn button {
-            border: none;
-            border-radius: var(--border-radius-sm);
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            color: white;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        header {
-            background: var(--card-bg);
-            border-bottom: none;
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(167, 139, 250, 0.1);
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 280px;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-            }
-            
-            .mobile-menu-btn {
-                display: flex !important;
-            }
-
-            .sidebar-close {
-                display: block;
-            }
-        }
-
-        /* Hide sidebar on auth pages */
-        body.auth-page .sidebar {
-            display: none;
-        }
-
-        body.auth-page .main-content {
-            margin-left: 0 !important;
-        }
-
-        body.auth-page .mobile-menu-btn {
-            display: none !important;
-        }
-
-        /* Scrollbar styling for sidebar */
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(167, 139, 250, 0.1);
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 3px;
-        }
-
-        /* Mobile overlay */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .sidebar-overlay.active {
             display: block;
         }
-    </style>
+    }
+
+    /* Hide sidebar on auth pages */
+    body.auth-page .sidebar {
+        display: none;
+    }
+
+    body.auth-page .main-content {
+        margin-left: 0 !important;
+    }
+
+    body.auth-page .mobile-menu-btn {
+        display: none !important;
+    }
+
+    /* Scrollbar styling for sidebar */
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: rgba(167, 139, 250, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+
+    /* Mobile overlay */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Desktop specific - ensure sidebar is always visible */
+    @media (min-width: 769px) {
+        .sidebar {
+            transform: translateX(0) !important;
+        }
+        
+        .sidebar-overlay {
+            display: none !important;
+        }
+        
+        .mobile-menu-btn {
+            display: none !important;
+        }
+        
+        .sidebar-close {
+            display: none !important;
+        }
+    }
+</style>
 </head>
 <body {% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}class="auth-page"{% endif %}>  
     <!-- Mobile Overlay -->
@@ -302,7 +321,7 @@
                 </a>
             </li>
             <li>
-                <a href="{% url 'calendar_view' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar_view' %}active{% endif %}">
+                <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
                     <span>📅</span>
                     Calendar
                 </a>
@@ -310,6 +329,14 @@
             
             <!-- Divider -->
             <li style="margin: 1.5rem 0; border-top: 1px solid rgba(167, 139, 250, 0.2);"></li>
+            
+            <!-- Profile Link -->
+            <li>
+                <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                    <span>👤</span>
+                    My Profile
+                </a>
+            </li>
             
             <li>
                 <a href="{% url 'logout' %}" class="nav-link">
@@ -402,121 +429,120 @@
     </div>
 
     <script src="{% static 'to_do_app/js/main.js' %}"></script>
-    
+
     <script>
-        // Mobile sidebar functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('sidebar');
-            const openSidebarBtn = document.getElementById('openSidebar');
-            const closeSidebarBtn = document.getElementById('closeSidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const sidebarCloseBtn = document.querySelector('.sidebar-close');
+    // Mobile sidebar functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const openSidebarBtn = document.getElementById('openSidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.querySelector('.main-content');
 
-            // Check if we're on an auth page
-            const isAuthPage = document.body.classList.contains('auth-page');
+        // Check if we're on mobile
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
 
-            // Check screen size and initialize
-            function checkScreenSize() {
-                if (window.innerWidth <= 768 && !isAuthPage) {
-                    // Mobile view
-                    mobileMenuBtn.style.display = 'flex';
-                    sidebarCloseBtn.style.display = 'block';
-                    sidebar.classList.remove('open');
-                    sidebarOverlay.classList.remove('active');
-                } else {
-                    // Desktop view or auth page
-                    if (!isAuthPage) {
-                        mobileMenuBtn.style.display = 'none';
-                        sidebarCloseBtn.style.display = 'none';
-                        sidebar.classList.add('open');
-                    }
-                    sidebarOverlay.classList.remove('active');
-                }
-            }
+        // Open sidebar (mobile only)
+        function openSidebar() {
+            if (!isMobile()) return; // Only work on mobile
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-            // Open sidebar
-            function openSidebar() {
-                if (isAuthPage) return;
-                sidebar.classList.add('open');
-                sidebarOverlay.classList.add('active');
-            }
+        // Close sidebar (mobile only)
+        function closeSidebar() {
+            if (!isMobile()) return; // Only work on mobile
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-            // Close sidebar
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('active');
-            }
-
-            // Event listeners
-            if (openSidebarBtn && !isAuthPage) {
-                openSidebarBtn.addEventListener('click', openSidebar);
-            }
-
-            if (closeSidebarBtn && !isAuthPage) {
-                closeSidebarBtn.addEventListener('click', closeSidebar);
-            }
-
-            if (sidebarOverlay && !isAuthPage) {
-                sidebarOverlay.addEventListener('click', closeSidebar);
-            }
-
-            // Close sidebar when clicking on nav links (mobile)
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768 && !isAuthPage) {
-                        closeSidebar();
-                    }
-                });
-            });
-
-            // Handle window resize
-            window.addEventListener('resize', checkScreenSize);
-
-            // Initial setup
-            checkScreenSize();
-
-            // Initialize theme toggle
-            initializeThemeToggle();
-        });
-
-        // Theme toggle function
-        function initializeThemeToggle() {
-            const themeToggle = document.querySelector('.theme-toggle');
-            if (!themeToggle) return;
-
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-            
-            document.documentElement.setAttribute('data-theme', initialTheme);
-            updateThemeIcon();
-
-            themeToggle.addEventListener('click', function() {
-                const htmlElement = document.documentElement;
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcon();
-                
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
-
-            function updateThemeIcon() {
-                const themeToggle = document.querySelector('.theme-toggle');
-                if (!themeToggle) return;
-                
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newIcon = currentTheme === 'dark' ? '☀️' : '🌙';
-                themeToggle.innerHTML = `<span>${newIcon}</span> Toggle Theme`;
+        // Toggle sidebar (mobile only)
+        function toggleSidebar() {
+            if (!isMobile()) return; // Only work on mobile
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
             }
         }
-    </script>
+
+        // Event listeners (only work on mobile)
+        if (openSidebarBtn) {
+            openSidebarBtn.addEventListener('click', openSidebar);
+        }
+
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar when clicking on nav links (mobile only)
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (isMobile()) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            // If resizing to desktop, ensure sidebar is visible
+            if (!isMobile()) {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Initialize theme toggle
+        initializeThemeToggle();
+    });
+
+    // Theme toggle function
+    function initializeThemeToggle() {
+        const themeToggle = document.querySelector('.theme-toggle');
+        if (!themeToggle) return;
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+        
+        document.documentElement.setAttribute('data-theme', initialTheme);
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', function() {
+            const htmlElement = document.documentElement;
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+            
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+
+        function updateThemeIcon() {
+            const themeToggle = document.querySelector('.theme-toggle');
+            if (!themeToggle) return;
+            
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newIcon = currentTheme === 'dark' ? '☀️' : '🌙';
+            themeToggle.innerHTML = `<span>${newIcon}</span> Toggle Theme`;
+        }
+    }
+</script>
 </body>
 </html>

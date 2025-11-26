@@ -4,98 +4,600 @@
 
 {% block content %}
 <h1 class="page-title">📅 Task Calendar</h1>
+<style>/* Calendar Styles */
+.calendar-container {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
 
-<div class="card">
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <h2>Your Scheduled Tasks</h2>
-        <p style="color: var(--text-light);">View all your tasks with due dates</p>
-    </div>
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
 
-    {% if tasks_with_due_dates %}
-    <div style="display: grid; gap: 1.5rem;">
-        {% for task in tasks_with_due_dates %}
-        {% if task.is_overdue %}
-        <div class="task-item {% if task.completed %}task-completed{% endif %}" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--box-shadow); border-left: 4px solid var(--primary-color);">
-        {% elif task.completed %}
-        <div class="task-item {% if task.completed %}task-completed{% endif %}" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--box-shadow); border-left: 4px solid var(--primary-color);">
-        {% else %}
-        <div class="task-item {% if task.completed %}task-completed{% endif %}" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--box-shadow); border-left: 4px solid var(--primary-color);">
-        {% endif %}
-            <div style="flex-grow: 1;">
-                <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-color); margin-bottom: 0.5rem;">
-                    {{ task.title }}
-                    {% if task.is_overdue %}
-                    <span style="background: var(--danger-color); color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">
-                        ⚠️ Overdue
-                    </span>
-                    {% endif %}
-                </div>
-                {% if task.description %}
-                <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                    {{ task.description }}
-                </div>
-                {% endif %}
-                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                    <span class="category-badge category-{{ task.category|lower }}">
-                        {{ task.category }}
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-light);">
-                        📅 {{ task.due_date }}
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-light);">
-                        {% if task.completed %}
-                         Completed
-                        {% else %}
-                         {{ task.get_due_status }}
-                        {% endif %}
-                    </span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-secondary">Edit</a>
-                <form method="post" action="{% url 'toggle_task' task.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm {% if task.completed %}btn-warning{% else %}btn-success{% endif %}">
-                        {% if task.completed %}↶ Pending{% else %}✓ Complete{% endif %}
-                    </button>
-                </form>
-                <form method="post" action="{% url 'delete_task' task.id %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this task?')">Delete</button>
-                </form>
+.calendar-navigation {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.calendar {
+    background: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: var(--primary-color);
+    color: white;
+}
+
+.calendar-weekday {
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+}
+
+.calendar-day {
+    background: white;
+    min-height: 120px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background: rgba(139, 92, 246, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.other-month {
+    background: #f8fafc;
+    color: #6b7280;
+    opacity: 0.6;
+}
+
+.calendar-day.today {
+    background: rgba(139, 92, 246, 0.1);
+    border: 2px solid var(--primary-color);
+    position: relative;
+}
+
+.calendar-day.today::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+}
+
+.day-number {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #1f2937; /* Dark gray for better visibility */
+}
+
+.day-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+.calendar-task {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: rgba(139, 92, 246, 0.1);
+    color: #1f2937; /* Dark text for better contrast */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border-left: 3px solid var(--primary-color);
+}
+
+.calendar-task:hover {
+    background: rgba(139, 92, 246, 0.2);
+    transform: translateX(2px);
+}
+
+.calendar-task.task-completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: #065f46; /* Dark green text */
+    text-decoration: line-through;
+    opacity: 0.8;
+    border-left-color: #10b981;
+}
+
+.calendar-task.task-overdue {
+    background: rgba(239, 68, 68, 0.1);
+    color: #991b1b; /* Dark red text */
+    border-left-color: #ef4444;
+    font-weight: 600;
+}
+
+.task-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Task List Styles */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem;
+    background: white;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+    gap: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--box-shadow);
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.task-item.task-overdue {
+    border-left-color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.task-item.task-completed {
+    border-left-color: var(--success-color);
+    opacity: 0.9;
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.task-content {
+    flex-grow: 1;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.task-header h4 {
+    margin: 0;
+    color: #1f2937; /* Dark gray for better visibility */
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.task-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.task-description {
+    color: #6b7280; /* Medium gray */
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.task-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #6b7280; /* Medium gray */
+}
+
+.task-due {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.task-status {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 500;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.inline-form {
+    display: inline;
+}
+
+/* Summary Styles */
+.summary-title {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.daily-tasks-title {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.summary-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: var(--box-shadow);
+}
+
+.summary-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.15);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.summary-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.summary-label {
+    color: #6b7280; /* Medium gray */
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280; /* Medium gray */
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-state h4 {
+    color: #1f2937; /* Dark gray */
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+/* Badges */
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-danger {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    color: white;
+}
+
+.badge-category {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .calendar-container {
+        gap: 1rem;
+    }
+    
+    .calendar-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .calendar-navigation {
+        justify-content: center;
+    }
+    
+    .calendar-day {
+        min-height: 80px;
+        padding: 0.25rem;
+        background: white;
+    }
+    
+    .day-number {
+        font-size: 0.8rem;
+        color: #1f2937; /* Dark gray */
+    }
+    
+    .calendar-task {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+        color: #1f2937; /* Dark gray */
+    }
+    
+    .task-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+        background: white;
+    }
+    
+    .task-actions {
+        justify-content: flex-start;
+        margin-top: 1rem;
+    }
+    
+    .task-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .task-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .summary-item {
+        padding: 1rem;
+        background: white;
+    }
+    
+    .summary-number {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-weekday {
+        padding: 0.75rem 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .calendar-day {
+        min-height: 60px;
+        background: white;
+    }
+    
+    .day-tasks {
+        max-height: 50px;
+    }
+    
+    .calendar-task {
+        font-size: 0.6rem;
+        padding: 1px 2px;
+        color: #1f2937; /* Dark gray */
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Scrollbar for day tasks */
+.day-tasks::-webkit-scrollbar {
+    width: 3px;
+}
+
+.day-tasks::-webkit-scrollbar-track {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.day-tasks::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.day-tasks::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}</style>
+
+<div class="calendar-container">
+    <!-- Calendar View -->
+    <div class="card">
+        <div class="calendar-header">
+            <h2>{{ current_month }} {{ current_year }}</h2>
+            <div class="calendar-navigation">
+                <a href="?month={{ prev_month }}" class="btn btn-sm btn-secondary">← Previous</a>
+                <a href="?month={{ today }}" class="btn btn-sm btn-primary">Today</a>
+                <a href="?month={{ next_month }}" class="btn btn-sm btn-secondary">Next →</a>
             </div>
         </div>
-        {% endfor %}
+
+        <div class="calendar">
+            <div class="calendar-weekdays">
+                <div class="calendar-weekday">Sun</div>
+                <div class="calendar-weekday">Mon</div>
+                <div class="calendar-weekday">Tue</div>
+                <div class="calendar-weekday">Wed</div>
+                <div class="calendar-weekday">Thu</div>
+                <div class="calendar-weekday">Fri</div>
+                <div class="calendar-weekday">Sat</div>
+            </div>
+            
+            <div class="calendar-days">
+                {% for week in calendar %}
+                    {% for day in week %}
+                        <div class="calendar-day {% if day.month != current_month_num %}other-month{% endif %} {% if day.is_today %}today{% endif %}">
+                            <div class="day-number">{{ day.day }}</div>
+                            <div class="day-tasks">
+                                {% for task in day.tasks %}
+                                    <div class="calendar-task 
+                                        {% if task.completed %}task-completed{% endif %}
+                                        {% if task.is_overdue %}task-overdue{% endif %}"
+                                         title="{{ task.title }} - Due: {{ task.due_date|date:'M j, Y' }}">
+                                       
+                                        {{ task.title|truncatechars:15 }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
-    {% else %}
-    <div style="text-align: center; padding: 3rem;">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">📅</div>
-        <h3 style="color: var(--text-light); margin-bottom: 1rem;">No tasks with due dates</h3>
-        <p style="color: var(--text-light); margin-bottom: 2rem;">
-            Add due dates to your tasks to see them here in the calendar view.
-        </p>
-        <a href="{% url 'add_task' %}" class="btn btn-primary">
-            + Add Task with Due Date
-        </a>
+
+    <!-- Task List for Selected Date -->
+    <div class="card">
+        <h3 class="daily-tasks-title">
+            {% if selected_date %}
+                Tasks for {{ selected_date|date:"F j, Y" }}
+            {% else %}
+                Today's Tasks
+            {% endif %}
+        </h3>
+        
+        {% if daily_tasks %}
+            <div class="task-list">
+                {% for task in daily_tasks %}
+                    <div class="task-item {% if task.completed %}task-completed{% endif %} {% if task.is_overdue %}task-overdue{% endif %}">
+                        <div class="task-content">
+                            <div class="task-header">
+                                <h4>{{ task.title }}</h4>
+                                <div class="task-badges">
+                                    {% if task.is_overdue %}
+                                        <span class="badge badge-danger">⚠️ Overdue</span>
+                                    {% endif %}
+                                    <span class="badge badge-category category-{{ task.category|lower }}">
+                                        {{ task.category }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% if task.description %}
+                                <p class="task-description">{{ task.description }}</p>
+                            {% endif %}
+                            <div class="task-meta">
+                                <span class="task-due">📅 Due: {{ task.due_date|date:"M j, Y g:i A" }}</span>
+                                <span class="task-status">
+                                    {% if task.completed %}
+                                        ✅ Completed
+                                    {% else %}
+                                        {{ task.get_due_status }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                            <form method="post" action="{% url 'toggle_task' task.id %}" class="inline-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm {% if task.completed %}btn-warning{% else %}btn-success{% endif %}">
+                                    {% if task.completed %}↶ Pending{% else %}✓ Complete{% endif %}
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'delete_task' task.id %}" class="inline-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this task?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <h4>No tasks for this date</h4>
+                <p>Add tasks with due dates to see them in your calendar.</p>
+                <a href="{% url 'add_task' %}" class="btn btn-primary">+ Add Task</a>
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
-<!-- Upcoming Tasks Summary -->
+<!-- Calendar Summary -->
 <div class="card">
-    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;"> Calendar Summary</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-        <div style="text-align: center; padding: 1.5rem; background: rgba(139, 92, 246, 0.1); border-radius: var(--border-radius);">
-            <div style="font-size: 2rem; font-weight: bold; color: var(--primary-color);">
-                {{ tasks_with_due_dates.count }}
-            </div>
-            <div style="color: var(--text-light);">Total Scheduled</div>
+    <h3 class="summary-title">📊 Calendar Summary</h3>
+    <div class="summary-grid">
+        <div class="summary-item">
+            <div class="summary-number">{{ total_scheduled }}</div>
+            <div class="summary-label">Total Scheduled</div>
         </div>
-        <div style="text-align: center; padding: 1.5rem; background: rgba(236, 72, 153, 0.1); border-radius: var(--border-radius);">
-            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-color);">
-                {{ tasks_with_due_dates|length }}
-            </div>
-            <div style="color: var(--text-light);">With Due Dates</div>
+        <div class="summary-item">
+            <div class="summary-number">{{ overdue_count }}</div>
+            <div class="summary-label">Overdue</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-number">{{ due_this_week }}</div>
+            <div class="summary-label">Due This Week</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-number">{{ completed_count }}</div>
+            <div class="summary-label">Completed</div>
         </div>
     </div>
 </div>
