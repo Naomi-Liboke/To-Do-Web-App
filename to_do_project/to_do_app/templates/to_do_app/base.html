@@ -3,391 +3,463 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django To-Do App</title>
+    <title>{% block title %}FocusFlow{% endblock %}</title>
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'to_do_app/css/style.css' %}">
     <style>
-    /* Sidebar active state */
-    .nav-link.active {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-        box-shadow: var(--box-shadow);
-    }
-
-    .nav-link:hover {
-        background: rgba(167, 139, 250, 0.1);
-        transform: translateX(5px);
-    }
-
-    /* Status colors */
-    .btn-primary {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-    }
-
-    .btn-secondary {
-        background: var(--gradient-secondary) !important;
-        color: white !important;
-    }
-
-    .btn-success {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-    }
-
-    .btn-warning {
-        background: var(--gradient-secondary) !important;
-        color: white !important;
-    }
-
-    .btn-danger {
-        background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
-        color: white !important;
-    }
-
-    /* Status badges */
-    .status-completed {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-    }
-
-    .status-pending {
-        background: var(--gradient-secondary) !important;
-        color: white !important;
-    }
-
-    .category-badge {
-        background: var(--gradient-primary) !important;
-        color: white !important;
-    }
-
-    /* Sidebar styles */
-    .sidebar {
-        position: fixed;
-        left: 0;
+    /* ===== MODERN HEADER STYLES ===== */
+    header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(167, 139, 250, 0.15);
+        padding: 0.75rem 0;
+        position: sticky;
         top: 0;
-        height: 100vh;
-        width: 250px;
-        background: var(--card-bg);
-        box-shadow: var(--box-shadow);
-        padding: 2rem 1rem;
         z-index: 1000;
-        transition: transform 0.3s ease;
-        overflow-y: auto;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
     }
 
-    .sidebar-close {
-        display: none;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
+    [data-theme="dark"] header {
+        background: rgba(30, 30, 40, 0.95);
+        border-bottom: 1px solid rgba(167, 139, 250, 0.1);
     }
 
-    .sidebar-close button {
-        border: none;
-        font-size: 1.2rem;
-        cursor: pointer;
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
+    .header-container {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-    }
-
-    .sidebar-header {
-        text-align: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid rgba(167, 139, 250, 0.2);
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
     }
 
     .logo {
         font-size: 1.75rem;
-        font-weight: 700;
+        font-weight: 800;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        transition: all 0.3s ease;
+    }
+
+    .logo span {
         background: var(--gradient-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 0.5rem;
+        position: relative;
     }
 
-    .sidebar-nav {
+    .logo::before {
+        content: '⚡';
+        font-size: 1.5rem;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: transform 0.3s ease;
+    }
+
+    .logo:hover::before {
+        transform: scale(1.2) rotate(15deg);
+    }
+
+    .logo:hover {
+        transform: translateY(-1px);
+    }
+
+    .main-nav {
+        display: flex;
+        align-items: center;
+        background: rgba(167, 139, 250, 0.05);
+        border-radius: 12px;
+        padding: 0.25rem;
+        border: 1px solid rgba(167, 139, 250, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0;
         list-style: none;
-        padding: 0;
         margin: 0;
-    }
-
-    .sidebar-nav li {
-        margin-bottom: 0.5rem;
+        padding: 0;
     }
 
     .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem 1.25rem;
         color: var(--text-color);
         text-decoration: none;
-        border-radius: var(--border-radius-sm);
-        transition: all 0.3s ease;
         font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        font-size: 0.95rem;
+        margin: 0 0.125rem;
     }
 
-    .sidebar-footer {
+    .nav-link:hover {
+        color: var(--primary-color);
+        background: rgba(167, 139, 250, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+        color: white;
+        background: var(--gradient-primary);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        font-weight: 600;
+    }
+
+    .nav-link.active::before {
+        content: '';
         position: absolute;
-        bottom: 2rem;
-        left: 0;
-        right: 0;
-        padding: 0 1rem;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: var(--gradient-primary);
+        border-radius: 10px;
+        z-index: -1;
+        opacity: 0.3;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-info {
+        color: var(--text-color);
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        background: rgba(167, 139, 250, 0.08);
+        border-radius: 10px;
+        border: 1px solid rgba(167, 139, 250, 0.15);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+
+    .user-info:hover {
+        background: rgba(167, 139, 250, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .logout-btn {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(167, 139, 250, 0.2);
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .logout-btn:hover {
+        background: rgba(245, 101, 101, 0.1);
+        border-color: rgba(245, 101, 101, 0.3);
+        color: #f56565;
+        transform: translateY(-1px);
     }
 
     .theme-toggle {
         border: none;
-        border-radius: var(--border-radius-sm);
-        width: 100%;
-        padding: 1rem;
+        border-radius: 10px;
+        padding: 0.75rem;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-        font-size: 1rem;
         color: white;
         transition: all 0.3s ease;
-        box-shadow: var(--box-shadow);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        background: var(--gradient-primary);
+        width: 46px;
+        height: 46px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
     }
 
-    .main-content {
-        margin-left: 250px;
-        min-height: 100vh;
-        background: var(--background-color);
-        transition: margin-left 0.3s ease;
+    .theme-toggle:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
     }
 
-    .mobile-menu-btn {
-        display: none;
-        align-items: center;
-    }
-
-    .mobile-menu-btn button {
-        border: none;
-        border-radius: var(--border-radius-sm);
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
+    /* ===== ENHANCED WELCOME MESSAGE ===== */
+    #welcome-message {
+        background: var(--gradient-primary);
         color: white;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
     }
 
-    header {
-        background: var(--card-bg);
-        border-bottom: none;
-        padding: 1rem 2rem;
-        position: sticky;
+    #welcome-message::before {
+        content: '';
+        position: absolute;
         top: 0;
-        z-index: 999;
-        box-shadow: 0 2px 10px rgba(167, 139, 250, 0.1);
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
     }
 
-    /* Mobile responsiveness */
-    @media (max-width: 768px) {
-        .sidebar {
-            transform: translateX(-100%);
-            width: 280px;
+    #welcome-message:hover::before {
+        left: 100%;
+    }
+
+    /* ===== MODERN MESSAGES ===== */
+    .messages {
+        position: fixed;
+        top: 100px;
+        right: 2rem;
+        z-index: 1100;
+        max-width: 400px;
+    }
+
+    .message {
+        padding: 1rem 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid;
+        animation: slideInRight 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .message.success {
+        background: rgba(72, 187, 120, 0.1);
+        border-left-color: #48bb78;
+        color: #2d3748;
+    }
+
+    .message.error {
+        background: rgba(245, 101, 101, 0.1);
+        border-left-color: #f56565;
+        color: #2d3748;
+    }
+
+    .message.info {
+        background: rgba(66, 153, 225, 0.1);
+        border-left-color: #4299e1;
+        color: #2d3748;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
         }
-        
-        .sidebar.open {
+        to {
+            opacity: 1;
             transform: translateX(0);
         }
-        
-        .main-content {
-            margin-left: 0 !important;
+    }
+
+    /* ===== BUTTON COLOR FIXES ===== */
+    /* Primary Purple for pending tasks and main actions */
+    .btn-primary {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    /* Secondary Purple for completed tasks and secondary actions */
+    .btn-secondary {
+        background: var(--gradient-secondary) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    /* Success button for completed tasks */
+    .btn-success {
+        background: var(--gradient-secondary) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    /* Warning button for pending tasks */
+    .btn-warning {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    /* Ensure all buttons have consistent styling */
+    .btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        padding: 0.75rem 1.5rem !important;
+        border-radius: var(--border-radius-sm) !important;
+        cursor: pointer !important;
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        transition: all 0.3s ease !important;
+        border: none !important;
+    }
+
+    .btn-sm {
+        padding: 0.6rem 1.25rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .btn-lg {
+        padding: 1rem 2rem !important;
+        font-size: 1rem !important;
+    }
+
+    /* Danger button remains red */
+    .btn-danger {
+        background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    /* ===== MOBILE RESPONSIVENESS ===== */
+    @media (max-width: 768px) {
+        header {
+            padding: 0.5rem 0;
         }
         
-        .mobile-menu-btn {
-            display: flex !important;
+        .header-container {
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
+        
+        .main-nav {
+            order: 3;
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        
+        .nav-links {
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(167, 139, 250, 0.05);
+            border-radius: 12px;
+            padding: 0.5rem;
+            border: 1px solid rgba(167, 139, 250, 0.1);
+        }
+        
+        .nav-link {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .header-actions {
+            gap: 0.75rem;
+        }
+        
+        .user-info, .logout-btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            padding: 0.6rem;
         }
 
-        .sidebar-close {
-            display: block;
+        .btn {
+            padding: 0.6rem 1.25rem !important;
+            font-size: 0.8rem !important;
         }
     }
 
-    /* Hide sidebar on auth pages */
-    body.auth-page .sidebar {
+    /* Hide navigation on auth pages */
+    body.auth-page .main-nav {
         display: none;
-    }
-
-    body.auth-page .main-content {
-        margin-left: 0 !important;
-    }
-
-    body.auth-page .mobile-menu-btn {
-        display: none !important;
-    }
-
-    /* Scrollbar styling for sidebar */
-    .sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .sidebar::-webkit-scrollbar-track {
-        background: rgba(167, 139, 250, 0.1);
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 3px;
-    }
-
-    /* Mobile overlay */
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-    }
-
-    .sidebar-overlay.active {
-        display: block;
-    }
-
-    /* Desktop specific - ensure sidebar is always visible */
-    @media (min-width: 769px) {
-        .sidebar {
-            transform: translateX(0) !important;
-        }
-        
-        .sidebar-overlay {
-            display: none !important;
-        }
-        
-        .mobile-menu-btn {
-            display: none !important;
-        }
-        
-        .sidebar-close {
-            display: none !important;
-        }
     }
 </style>
 </head>
 <body {% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}class="auth-page"{% endif %}>  
-    <!-- Mobile Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar" id="sidebar">
-        <!-- Close Button for Mobile -->
-        <div class="sidebar-close">
-            <button id="closeSidebar" class="btn-primary">
-                ✕
-            </button>
-        </div>
-
-        <div class="sidebar-header">
-            <div class="logo">
-                FocusFlow
-            </div>
-            {% if user.is_authenticated %}
-            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0;">
-                Welcome, {{ user.username }}
-            </p>
-            {% endif %}
-        </div>
-
-        <ul class="sidebar-nav">
-            {% if user.is_authenticated %}
-            <li>
-                <a href="{% url 'task_list' %}" class="nav-link {% if request.resolver_match.url_name == 'task_list' %}active{% endif %}">
-                    <span>📋</span>
-                    My Tasks
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'add_task' %}" class="nav-link {% if request.resolver_match.url_name == 'add_task' %}active{% endif %}">
-                    <span>➕</span>
-                    Add Task
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
-                    <span>📅</span>
-                    Calendar
-                </a>
-            </li>
-            
-            <!-- Divider -->
-            <li style="margin: 1.5rem 0; border-top: 1px solid rgba(167, 139, 250, 0.2);"></li>
-            
-            <!-- Profile Link -->
-            <li>
-                <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                    <span>👤</span>
-                    My Profile
-                </a>
-            </li>
-            
-            <li>
-                <a href="{% url 'logout' %}" class="nav-link">
-                    <span>🚪</span>
-                    Logout
-                </a>
-            </li>
-            {% else %}
-            <li>
-                <a href="{% url 'login' %}" class="nav-link">
-                    <span>🔑</span>
-                    Login
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'register' %}" class="nav-link">
-                    <span>👤</span>
-                    Register
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-
-        <!-- Theme Toggle in Sidebar -->
-        <div class="sidebar-footer">
-            <button class="theme-toggle btn-primary" aria-label="Toggle theme">
-                <span>🌙</span>
-                Toggle Theme
-            </button>
-        </div>
-    </nav>
-
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Top Header -->
+        <!-- Modern Top Header -->
         <header>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="mobile-menu-btn">
-                    <button id="openSidebar" class="btn-primary">
-                        ☰
-                    </button>
-                </div>
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <h1 style="color: var(--text-color); font-size: 1.5rem; margin: 0;">
-                        {% block page_title %}FocusFlow{% endblock %}
-                    </h1>
-                </div>
-                <div class="user-info" style="display: flex; align-items: center; gap: 1rem;">
+            <div class="header-container">
+                <a href="{% url 'task_list' %}" class="logo">
+                    <span>FocusFlow</span>
+                </a>
+                
+                {% if not request.resolver_match.url_name == 'login' and not request.resolver_match.url_name == 'register' %}
+                <nav class="main-nav">
+                    <ul class="nav-links">
+                        {% if user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'task_list' %}" class="nav-link {% if request.resolver_match.url_name == 'task_list' %}active{% endif %}">
+                                My Tasks
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'add_task' %}" class="nav-link {% if request.resolver_match.url_name == 'add_task' %}active{% endif %}">
+                                Add Task
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
+                                Calendar
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                                Profile
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'login' %}" class="nav-link">
+                                Login
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'register' %}" class="nav-link">
+                                Register
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+                <div class="header-actions">
                     {% if user.is_authenticated %}
-                    <span style="color: var(--text-light);">Hello, {{ user.username }}</span>
+                    <div class="user-info">Hello, {{ user.username }}</div>
+                    {% if not request.resolver_match.url_name == 'login' and not request.resolver_match.url_name == 'register' %}
+                    <a href="{% url 'logout' %}" class="logout-btn">
+                        Logout
+                    </a>
                     {% endif %}
+                    {% endif %}
+                    <button class="theme-toggle" aria-label="Toggle theme">
+                        <span>🌙</span>
+                    </button>
                 </div>
             </div>
         </header>
@@ -403,7 +475,7 @@
                     </div>
                 {% endif %}
 
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and not request.resolver_match.url_name == 'login' and not request.resolver_match.url_name == 'register' and not request.resolver_match.url_name == 'profile' %}
                 <div id="welcome-message">
                     Welcome back, {{ user.username }}! 🎉
                 </div>
@@ -431,83 +503,7 @@
     <script src="{% static 'to_do_app/js/main.js' %}"></script>
 
     <script>
-    // Mobile sidebar functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('sidebar');
-        const openSidebarBtn = document.getElementById('openSidebar');
-        const closeSidebarBtn = document.getElementById('closeSidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const mainContent = document.querySelector('.main-content');
-
-        // Check if we're on mobile
-        function isMobile() {
-            return window.innerWidth <= 768;
-        }
-
-        // Open sidebar (mobile only)
-        function openSidebar() {
-            if (!isMobile()) return; // Only work on mobile
-            sidebar.classList.add('open');
-            sidebarOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Close sidebar (mobile only)
-        function closeSidebar() {
-            if (!isMobile()) return; // Only work on mobile
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // Toggle sidebar (mobile only)
-        function toggleSidebar() {
-            if (!isMobile()) return; // Only work on mobile
-            if (sidebar.classList.contains('open')) {
-                closeSidebar();
-            } else {
-                openSidebar();
-            }
-        }
-
-        // Event listeners (only work on mobile)
-        if (openSidebarBtn) {
-            openSidebarBtn.addEventListener('click', openSidebar);
-        }
-
-        if (closeSidebarBtn) {
-            closeSidebarBtn.addEventListener('click', closeSidebar);
-        }
-
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', closeSidebar);
-        }
-
-        // Close sidebar when clicking on nav links (mobile only)
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (isMobile()) {
-                    closeSidebar();
-                }
-            });
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            // If resizing to desktop, ensure sidebar is visible
-            if (!isMobile()) {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-
-        // Initialize theme toggle
-        initializeThemeToggle();
-    });
-
-    // Theme toggle function
+    // Enhanced Theme toggle function
     function initializeThemeToggle() {
         const themeToggle = document.querySelector('.theme-toggle');
         if (!themeToggle) return;
@@ -528,10 +524,10 @@
             localStorage.setItem('theme', newTheme);
             updateThemeIcon();
             
-            this.style.transform = 'scale(0.95)';
+            this.style.transform = 'scale(0.9) rotate(180deg)';
             setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
+                this.style.transform = 'scale(1) rotate(0deg)';
+            }, 300);
         });
 
         function updateThemeIcon() {
@@ -540,9 +536,45 @@
             
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newIcon = currentTheme === 'dark' ? '☀️' : '🌙';
-            themeToggle.innerHTML = `<span>${newIcon}</span> Toggle Theme`;
+            themeToggle.innerHTML = `<span>${newIcon}</span>`;
         }
     }
+
+    // Auto-hide messages after 5 seconds
+    function initializeMessages() {
+        const messages = document.querySelectorAll('.message');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transform = 'translateX(100%)';
+                setTimeout(() => message.remove(), 300);
+            }, 5000);
+        });
+    }
+
+    // Initialize everything on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeThemeToggle();
+        initializeMessages();
+        
+        // Add subtle header scroll effect
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                header.style.backdropFilter = 'blur(30px)';
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                    header.style.background = 'rgba(20, 20, 30, 0.98)';
+                }
+            } else {
+                header.style.backdropFilter = 'blur(20px)';
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                    header.style.background = 'rgba(30, 30, 40, 0.95)';
+                }
+            }
+        });
+    });
 </script>
 </body>
 </html>
