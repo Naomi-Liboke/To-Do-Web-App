@@ -24,6 +24,10 @@ from .forms import ProfileForm
 # Password Reset Views at the TOP to avoid circular imports
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'to_do_app/password_reset.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request, 'Your password has been reset successfully. Please log in.')
+        return super().dispatch(request, *args, **kwargs)
     email_template_name = 'to_do_app/password_reset_email.html'
     subject_template_name = 'to_do_app/password_reset_subject.txt'
     success_url = reverse_lazy('password_reset_done')
