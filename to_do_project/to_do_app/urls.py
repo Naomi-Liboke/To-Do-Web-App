@@ -1,9 +1,10 @@
 # to_do_app/urls.py
-from django.urls import path, reverse_lazy # <-- Import reverse_lazy here
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import test_email
 
 urlpatterns = [
     # Main app URLs
@@ -18,34 +19,32 @@ urlpatterns = [
     path('calendar/', views.calendar_view, name='calendar'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/change-password/', views.change_password, name='change_password'),
+    path('test-email/', test_email, name='test_email'),
     
-    # Password reset flow
-    path('password-reset/',
+    # Password reset URLs
+    path('password-reset/', 
          auth_views.PasswordResetView.as_view(
              template_name='to_do_app/password_reset.html',
              email_template_name='to_do_app/password_reset_email.html',
              subject_template_name='to_do_app/password_reset_subject.txt',
-             success_url=reverse_lazy('password_reset_done')
-         ),
+             success_url='/password-reset/done/'
+         ), 
          name='password_reset'),
-
-    path('password-reset/done/',
+    path('password-reset/done/', 
          auth_views.PasswordResetDoneView.as_view(
              template_name='to_do_app/password_reset_done.html'
-         ),
+         ), 
          name='password_reset_done'),
-
-    path('reset/<uidb64>/<token>/',
+    path('reset/<uidb64>/<token>/', 
          auth_views.PasswordResetConfirmView.as_view(
              template_name='to_do_app/password_reset_confirm.html',
-             success_url=reverse_lazy('password_reset_complete')
-         ),
+             success_url='/reset/done/'
+         ), 
          name='password_reset_confirm'),
-
-    path('reset/done/',
+    path('reset/done/', 
          auth_views.PasswordResetCompleteView.as_view(
              template_name='to_do_app/password_reset_complete.html'
-         ),
+         ), 
          name='password_reset_complete'),
 ]
 

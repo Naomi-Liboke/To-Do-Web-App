@@ -20,14 +20,12 @@ from calendar import monthrange
 import calendar as cal
 from .models import Task, Profile
 from .forms import ProfileForm
+from django.core.mail import send_mail
+from django.http import HttpResponse
 
 # Password Reset Views at the TOP to avoid circular imports
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'to_do_app/password_reset.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        messages.success(request, 'Your password has been reset successfully. Please log in.')
-        return super().dispatch(request, *args, **kwargs)
     email_template_name = 'to_do_app/password_reset_email.html'
     subject_template_name = 'to_do_app/password_reset_subject.txt'
     success_url = reverse_lazy('password_reset_done')
@@ -383,3 +381,13 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     
     return render(request, 'to_do_app/change_password.html', {'form': form})
+
+def test_email(request):
+    send_mail(
+        subject='Test Email from FocusFlow',
+        message='This is a test email to confirm Gmail SMTP is working.',
+        from_email='focusflow@gmail.com',  # must match EMAIL_HOST_USER
+        recipient_list=['codercode165@gmail.com'],  # replace with your Gmail to test
+        fail_silently=False,
+    )
+    return HttpResponse("Test email sent! Check your inbox or spam folder.")
