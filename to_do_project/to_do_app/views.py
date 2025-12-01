@@ -109,6 +109,7 @@ def task_list(request):
     # Get search query and category filter from URL parameters
     search_query = request.GET.get('q', '')
     category_filter = request.GET.get('category', '')
+    status_filter = request.GET.get('status', '')
     
     # Get tasks for the current user
     tasks = Task.objects.filter(user=request.user).order_by('-created_at')
@@ -123,6 +124,13 @@ def task_list(request):
     # Apply category filter if selected
     if category_filter:
         tasks = tasks.filter(category__iexact=category_filter)
+
+    # Apply status filter if selected
+    if status_filter:
+        if status_filter.lower() == 'completed':
+            tasks = tasks.filter(completed=True)
+        elif status_filter.lower() == 'pending':
+            tasks = tasks.filter(completed=False)
     
     # Calculate stats (these will reflect the filtered tasks)
     total_tasks = tasks.count()
