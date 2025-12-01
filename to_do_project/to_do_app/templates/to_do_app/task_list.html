@@ -156,6 +156,16 @@
                 </div>
             </div>
             <div class="task-actions" style="display: flex; gap: 0.75rem;">
+                {% if task.attachment %}
+                <a href="{{ task.attachment.url }}" target="_blank" class="btn btn-sm btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--gradient-secondary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: var(--border-radius-sm); cursor: pointer; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">
+                    📂 View File
+                </a>
+                {% else %}
+                <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: rgba(139, 92, 246, 0.1); color: var(--primary-color);">
+                    ❌ No File
+                </span>
+                {% endif %}
+
                 <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--gradient-secondary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: var(--border-radius-sm); cursor: pointer; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">
                      Edit
                 </a>

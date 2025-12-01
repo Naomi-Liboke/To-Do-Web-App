@@ -52,6 +52,29 @@
             <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">No file currently attached.</p>
             {% endif %}
 
+            {% if task.attachment %}
+            <div style="margin-top: 0.75rem;">
+                <label style="
+    font-size: 0.875rem; 
+    color: var(--danger-color); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.4rem;
+    white-space: nowrap;
+    font-weight: normal;
+">
+    <input 
+        type="checkbox" 
+        name="remove_attachment"
+        style="transform: scale(1.1); vertical-align: middle;"
+    >
+    <span style="position: relative; top: -2px;">Remove current file</span>
+</label>
+
+            </div>
+            {% endif %}
+
+
             <input 
                 type="file" 
                 id="attachment" 

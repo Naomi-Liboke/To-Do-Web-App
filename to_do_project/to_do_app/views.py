@@ -441,3 +441,39 @@ def delete_account(request):
     else:
         # If not POST, show confirmation page
         return render(request, 'to_do_app/confirm_delete_account.html')
+    
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+
+    if request.method == 'POST':
+        # Track if anything changed
+        action_done = False
+
+        task.title = request.POST['title']
+        task.description = request.POST.get('description', '')
+        task.category = request.POST['category']
+        task.due_date = request.POST.get('due_date') or None
+
+        # 1️⃣ Handle file removal
+        if 'remove_attachment' in request.POST:
+            if task.attachment:
+                task.attachment.delete()
+                task.attachment = None
+                messages.success(request, "File successfully removed.")
+                action_done = True
+
+        # 2️⃣ Handle file replacement (upload new one)
+        if 'attachment' in request.FILES:
+            task.attachment = request.FILES['attachment']
+            messages.success(request, "File successfully updated.")
+            action_done = True
+
+        # 3️⃣ If user changed **other task fields** (title, desc, category, date)
+        # but did NOT upload/remove files → show regular update msg
+        if not action_done:
+            messages.success(request, "Task updated successfully.")
+
+        task.save()
+        return redirect('task_list')
+
+    return render(request, 'to_do_app/edit_task.html', {'task': task})

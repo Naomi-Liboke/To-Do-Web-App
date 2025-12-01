@@ -246,24 +246,54 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // IMPROVED Theme initialization function
+
+function toggleTheme() {
+    const htmlElement = document.documentElement;
+    const currentTheme = htmlElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    // Apply new theme immediately
+    htmlElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    // Update the toggle icon right away
+    updateThemeIcon();
+}
+
 function initializeTheme() {
     console.log('Initializing theme system...');
     
     // Apply theme immediately based on saved preference or system preference
     applyStoredTheme();
     
-    // Set up theme toggle with event delegation for better reliability
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.theme-toggle')) {
+    // Set up theme toggle with event delegation for better reliability.
+    // Use `pointerdown` so the toggle responds immediately on press,
+    // and only handle primary (left) button clicks.
+    document.addEventListener('pointerdown', function(e) {
+        if (e.button === 0 && e.target && e.target.closest && e.target.closest('.theme-toggle')) {
+            e.preventDefault();
             toggleTheme();
         }
-    });
+    }, { passive: false });
     
     // Also set up direct event listener for immediate response
     const themeToggle = document.querySelector('.theme-toggle');
     if (themeToggle) {
         console.log('Theme toggle button found, setting up direct listener');
-        themeToggle.addEventListener('click', toggleTheme);
+        // Listen for pointerdown for immediate response, and keydown for keyboard accessibility
+        themeToggle.addEventListener('pointerdown', function(e) {
+            if (e.button === 0) {
+                e.preventDefault();
+                toggleTheme();
+            }
+        }, { passive: false });
+
+        themeToggle.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
     } else {
         console.log('Theme toggle button not found on initial load');
         // Try again after a short delay in case the button loads later
@@ -271,7 +301,20 @@ function initializeTheme() {
             const retryToggle = document.querySelector('.theme-toggle');
             if (retryToggle) {
                 console.log('Theme toggle button found on retry');
-                retryToggle.addEventListener('click', toggleTheme);
+                retryToggle.addEventListener('pointerdown', function(e) {
+                    if (e.button === 0) {
+                        e.preventDefault();
+                        toggleTheme();
+                    }
+                }, { passive: false });
+
+                retryToggle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleTheme();
+                    }
+                });
+
                 updateThemeIcon(); // Ensure icon is correct
             }
         }, 100);
@@ -346,9 +389,10 @@ function updateThemeIcon() {
     
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newIcon = currentTheme === 'dark' ? '☀️' : '🌙';
-    
+
     console.log('Updating theme icon to:', newIcon);
-    themeToggle.innerHTML = newIcon;
+    // Use textContent to avoid parsing/innerHTML overhead and be safer
+    themeToggle.textContent = newIcon;
 }
 
 // Helper function to show messages
