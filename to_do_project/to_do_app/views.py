@@ -423,10 +423,20 @@ def delete_account(request):
                 return redirect('profile')
         
         user = request.user
-        username = user.username
-        logout(request)  # Log out the user before deleting
+        email = user.email  # Store email before deleting
+        
+        # First, delete the profile to avoid cascade issues
+        if hasattr(user, 'profile'):
+            user.profile.delete()
+        
+        # Then delete the user
         user.delete()
-        messages.success(request, f'Account "{username}" has been deleted successfully.')
+        
+        # Optional: Clear the email from the database
+        # This allows the email to be reused
+        User.objects.filter(email=email).delete()
+        
+        messages.success(request, f'Your account has been deleted successfully.')
         return redirect('/login/')  # Redirect to login page
     else:
         # If not POST, show confirmation page
