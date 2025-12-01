@@ -22,6 +22,7 @@ from .models import Task, Profile
 from .forms import ProfileForm
 from django.core.mail import send_mail
 from django.http import HttpResponse
+from django.contrib.auth import logout
 
 # Password Reset Views at the TOP to avoid circular imports
 class CustomPasswordResetView(PasswordResetView):
@@ -403,3 +404,15 @@ def remove_avatar(request):
     else:
         messages.info(request, 'No profile picture to remove.')
     return redirect('profile')
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)  # Log out the user before deleting
+        user.delete()
+        messages.success(request, 'Your account has been deleted successfully.')
+        return redirect('/login/')  # Redirect to login page
+    else:
+        messages.error(request, 'Invalid request.')
+        return redirect('profile')

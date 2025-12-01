@@ -73,7 +73,6 @@
                         <button type="submit" class="btn btn-danger btn-sm">Remove Profile Picture</button>
                     </form>
                 {% endif %}
-
             
             <!-- Account Statistics -->
             <div class="profile-section">
@@ -97,6 +96,11 @@
                     </div>
                 </div>
             </div>
+
+            <form method="post" action="{% url 'delete_account' %}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete Account</button>
+            </form>
         </div>
     </div>
 </div>

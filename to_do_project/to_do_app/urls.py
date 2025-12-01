@@ -21,6 +21,7 @@ urlpatterns = [
     path('profile/change-password/', views.change_password, name='change_password'),
     path('test-email/', test_email, name='test_email'),
     path('remove-avatar/', views.remove_avatar, name='remove_avatar'),
+    path('profile/delete-account/', views.delete_account, name='delete_account'),
     
     # Password reset URLs
     path('password-reset/', 
