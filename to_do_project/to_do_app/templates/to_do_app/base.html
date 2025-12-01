@@ -208,6 +208,16 @@ body {
         box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
     }
 
+    .nav-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.5rem;
+    border: 2px solid rgba(167, 139, 250, 0.3);
+    vertical-align: middle;
+}
+
     /* ===== ENHANCED WELCOME MESSAGE ===== */
     #welcome-message {
         background: var(--gradient-primary);
@@ -346,6 +356,23 @@ body {
         border: none !important;
     }
 
+    .btn-danger.btn-sm {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-danger.btn-sm:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+
     /* ===== MOBILE RESPONSIVENESS ===== */
     @media (max-width: 768px) {
         header {
@@ -441,9 +468,15 @@ body {
                         </li>
                         <li>
                             <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                                Profile
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="nav-avatar">
+                                {% else %}
+                                    <span class="nav-icon">👤</span>
+                                {% endif %}
+                                <span class="nav-username">{{ user.username }}</span>
                             </a>
                         </li>
+
                         {% else %}
                         <li>
                             <a href="{% url 'login' %}" class="nav-link">

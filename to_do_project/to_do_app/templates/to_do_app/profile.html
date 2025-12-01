@@ -51,11 +51,6 @@
                     <div class="form-group">
                         <label for="{{ profile_form.avatar.id_for_label }}">Profile Picture</label>
                         {{ profile_form.avatar }}
-                        {% if user.profile.avatar %}
-                            <div class="current-avatar">
-                                <img src="{{ user.profile.avatar.url }}" alt="Current avatar" class="avatar-preview">
-                            </div>
-                        {% endif %}
                     </div>
                     
                     <div class="form-check">
@@ -64,13 +59,21 @@
                             Receive email notifications
                         </label>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Update Profile</button>
                         <a href="{% url 'change_password' %}" class="btn btn-secondary">Change Password</a>
                     </div>
                 </form>
-            </div>
+
+                <!-- Separate remove avatar form -->
+                {% if user.profile.avatar %}
+                    <form method="post" action="{% url 'remove_avatar' %}" style="margin-top: 1rem;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Remove Profile Picture</button>
+                    </form>
+                {% endif %}
+
             
             <!-- Account Statistics -->
             <div class="profile-section">

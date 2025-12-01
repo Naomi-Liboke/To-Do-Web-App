@@ -391,3 +391,15 @@ def test_email(request):
         fail_silently=False,
     )
     return HttpResponse("Test email sent! Check your inbox or spam folder.")
+
+@login_required
+def remove_avatar(request):
+    profile = request.user.profile
+    if profile.avatar:
+        profile.avatar.delete(save=False)
+        profile.avatar = None
+        profile.save()
+        messages.success(request, 'Profile picture removed successfully.')
+    else:
+        messages.info(request, 'No profile picture to remove.')
+    return redirect('profile')
