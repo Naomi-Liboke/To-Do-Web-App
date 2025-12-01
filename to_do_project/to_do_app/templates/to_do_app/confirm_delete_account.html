@@ -1,0 +1,123 @@
+{% extends 'to_do_app/base.html' %}
+
+{% block content %}
+<div class="delete-account-container">
+    <div class="card danger-card">
+        <div class="card-header">
+            <h2 class="danger-title">⚠️ Delete Account</h2>
+        </div>
+        <div class="card-body">
+            <p class="danger-text">
+                <strong>Warning:</strong> This action is permanent and cannot be undone.
+            </p>
+            <p class="danger-details">
+                All your data including tasks, profile information, and settings will be permanently deleted.
+            </p>
+            
+            <form method="post" action="{% url 'delete_account' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="password-confirm">Enter your password to confirm:</label>
+                    <input type="password" name="password" id="password-confirm" class="form-control" required>
+                    <small class="text-muted">For security, please confirm your password</small>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you absolutely sure? This cannot be undone!')">
+                        Permanently Delete My Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.delete-account-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.danger-card {
+    border: 2px solid #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.card-header {
+    background: #ef4444;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.danger-title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.danger-text {
+    color: #ef4444;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.danger-details {
+    color: #666;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}

@@ -356,6 +356,11 @@ def profile_view(request):
             profile_form.save()
             messages.success(request, 'Profile updated successfully!')
             return redirect('profile')
+        else:
+            # Display form errors
+            for field, errors in profile_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         profile_form = ProfileForm(instance=profile)
     
@@ -364,6 +369,7 @@ def profile_view(request):
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'pending_tasks': pending_tasks,
+        'user': request.user,  # Add user to context for template
     }
     return render(request, 'to_do_app/profile.html', context)
 
@@ -408,11 +414,20 @@ def remove_avatar(request):
 @login_required
 def delete_account(request):
     if request.method == 'POST':
+        # Optional: Add password confirmation for extra security
+        password = request.POST.get('password')
+        if password:
+            user = authenticate(username=request.user.username, password=password)
+            if not user:
+                messages.error(request, 'Incorrect password. Account deletion canceled.')
+                return redirect('profile')
+        
         user = request.user
+        username = user.username
         logout(request)  # Log out the user before deleting
         user.delete()
-        messages.success(request, 'Your account has been deleted successfully.')
+        messages.success(request, f'Account "{username}" has been deleted successfully.')
         return redirect('/login/')  # Redirect to login page
     else:
-        messages.error(request, 'Invalid request.')
-        return redirect('profile')
+        # If not POST, show confirmation page
+        return render(request, 'to_do_app/confirm_delete_account.html')

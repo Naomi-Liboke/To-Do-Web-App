@@ -107,14 +107,38 @@ class Task(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    # Personal Information
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, blank=True)
+    
+    # Bio & Location
     bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    
+    # Contact Information
+    phone = models.CharField(max_length=20, blank=True)
+    website = models.URLField(max_length=200, blank=True)
+    
+    # Date of Birth
     birth_date = models.DateField(null=True, blank=True)
+    
+    # Profile Image
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    
+    # Preferences
     email_notifications = models.BooleanField(default=True)
     
     def __str__(self):
         return f"{self.user.username}'s Profile"
+    
+    @property
+    def full_name(self):
+        """Return the full name if available, otherwise username"""
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.user.username
 
 # Create profile when user is created
 @receiver(post_save, sender=User)
