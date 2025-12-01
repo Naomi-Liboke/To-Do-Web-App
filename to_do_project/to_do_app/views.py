@@ -131,7 +131,7 @@ def task_list(request):
     completed_today = Task.completed_today(request.user)
     
     # Get unique categories for the filter dropdown
-    categories = Task.objects.filter(user=request.user).values_list('category', flat=True).distinct()
+    categories = [choice[0] for choice in Task.CATEGORY_CHOICES]
     
     context = {
         'tasks': tasks,
