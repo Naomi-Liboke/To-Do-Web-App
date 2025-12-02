@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fdf4ff;
+      color: #1e1b4b;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 {
+      color: #8b5cf6;
+      margin-top: 0;
+    }
+    ul {
+      padding-left: 20px;
+      margin: 20px 0;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #5b21b6;
+    }
+    .logo {
+      margin-top: 10px;
+      height: 40px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🌟 Hey {{ user.username }}!</h2>
+    <p>You’ve got some tasks waiting for your magic touch:</p>
+    <ul>
+      {% for task in tasks %}
+        <li>✅ <strong>{{ task.title }}</strong> — due {{ task.due_date|date:"F j" }}</li>
+      {% endfor %}
+    </ul>
+    <p>Let’s make today count. You’ve got this 💪</p>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="http://127.0.0.1:8000/" style="
+            background-color: #8b5cf6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        ">
+            ⚡ View Tasks on FocusFlow
+        </a>
+    </div>
+
+    <div class="footer" style="
+        background-color: #f3e8ff;
+        padding: 20px;
+        margin-top: 40px;
+        border-top: 1px solid #d8b4fe;
+        text-align: center;
+        font-size: 0.95em;
+        color: #5b21b6;
+        border-radius: 0 0 12px 12px;
+    ">
+        <div style="margin-bottom: 10px;">
+            <strong style="font-size: 1.1em;">⚡ FocusFlow</strong>
+        </div>
+        <div>Stay focused. Stay flowing.</div>
+    </div>

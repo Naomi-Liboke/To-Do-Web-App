@@ -154,7 +154,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'codercode165@gmail.com'
-EMAIL_HOST_PASSWORD = 'ivitcyntghrmtrsh'  # only YOU use this
+EMAIL_HOST_USER = 'naomitesting18@gmail.com'
+EMAIL_HOST_PASSWORD = 'nlrxxdllzwumpjir'  # only YOU use this
 
-DEFAULT_FROM_EMAIL = 'FocusFlow <codercode165@gmail.com>'
+DEFAULT_FROM_EMAIL = '"FocusFlow Notifications" <naomitesting18@gmail.com>'

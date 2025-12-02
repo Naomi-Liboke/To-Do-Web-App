@@ -23,6 +23,8 @@ from .forms import ProfileForm, RegistrationForm
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.contrib.auth import logout
+from to_do_app.services.reminders import get_user_pending_tasks, build_pending_email
+from to_do_app.utils.email import send_html_email_with_logo
 
 # Password Reset Views at the TOP to avoid circular imports
 class CustomPasswordResetView(PasswordResetView):
@@ -466,3 +468,17 @@ def edit_task(request, task_id):
         return redirect('task_list')
 
     return render(request, 'to_do_app/edit_task.html', {'task': task})
+
+@login_required
+def send_reminder_now(request):
+    tasks = get_user_pending_tasks(request.user, window_days=0)
+    if tasks.exists():
+        subject, html_body = build_pending_email(request.user, tasks)
+        send_html_email_with_logo(
+            subject=subject,
+            template_name="to_do_app/reminder.html",
+            context={"user": request.user, "tasks": tasks},
+            recipient=request.user.email
+        )
+        return HttpResponse("Reminder email sent to you!")
+    return HttpResponse("No pending tasks to remind.")
