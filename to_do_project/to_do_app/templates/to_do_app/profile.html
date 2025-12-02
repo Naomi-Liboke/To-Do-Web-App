@@ -125,9 +125,9 @@
                     
                     <div class="form-group">
                         <div class="checkbox-group">
-                            {{ profile_form.email_notifications }}
-                            <label for="{{ profile_form.email_notifications.id_for_label }}" class="checkbox-label">
-                                Receive email notifications
+                            <label class="checkbox-inline">
+                                {{ profile_form.email_notifications }}
+                                <span class="checkbox-text">Receive email notifications</span>
                             </label>
                         </div>
                     </div>
@@ -529,6 +529,31 @@ textarea {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+/* Inline checkbox wrapper (clickable area + alignment) */
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem; /* tighter spacing between box and label */
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    width: auto; /* avoid stretching */
+    font-weight: 400; /* normal text weight */
+}
+
+.checkbox-inline input[type="checkbox"] {
+    transform: scale(1.02);
+    margin: 0;
+    margin-right: 0.15rem;
+    accent-color: #6d28d9; /* purple that matches theme */
+}
+
+.checkbox-inline .checkbox-text {
+    line-height: 1.1;
+    white-space: nowrap; /* keep text on one line */
+    font-weight: 400;
 }
 
 .checkbox-label {

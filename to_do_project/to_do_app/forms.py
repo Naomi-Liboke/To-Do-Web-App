@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Profile
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import password_validation
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -76,3 +78,37 @@ class ProfileForm(forms.ModelForm):
             if field_name != 'email_notifications':
                 if 'class' not in field.widget.attrs:
                     field.widget.attrs['class'] = 'form-control'
+
+
+class RegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
+        'placeholder': 'Enter your email',
+        'class': 'form-control'
+    }))
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Apply consistent classes/placeholders
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Choose a username'
+        })
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Create a password'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm your password'
+        })
+
+        # Use Django's configured password validators help text (HTML)
+        try:
+            self.fields['password1'].help_text = password_validation.password_validators_help_text_html()
+        except Exception:
+            # Fallback to plain text list if html helper is unavailable
+            self.fields['password1'].help_text = '\n'.join(password_validation.password_validators_help_texts())

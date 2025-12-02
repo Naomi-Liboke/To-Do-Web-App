@@ -12,29 +12,48 @@
             {% endfor %}
         </div>
         {% endif %}
+
+        {% if form.errors %}
+        <div class="messages">
+            <div class="message error">Please correct the errors below.</div>
+        </div>
+        {% endif %}
         
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" required 
-                       placeholder="Choose a username" autofocus>
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% for err in form.username.errors %}
+                    <div class="message error">{{ err }}</div>
+                {% endfor %}
             </div>
+
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required 
-                       placeholder="Enter your email">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% for err in form.email.errors %}
+                    <div class="message error">{{ err }}</div>
+                {% endfor %}
             </div>
+
             <div class="form-group">
-                <label for="password1">Password</label>
-                <input type="password" id="password1" name="password1" class="form-control" required 
-                       placeholder="Create a password">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                <small class="text-muted">{{ form.password1.help_text|safe }}</small>
+                {% for err in form.password1.errors %}
+                    <div class="message error">{{ err }}</div>
+                {% endfor %}
             </div>
+
             <div class="form-group">
-                <label for="password2">Confirm Password</label>
-                <input type="password" id="password2" name="password2" class="form-control" required 
-                       placeholder="Confirm your password">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
+                {% for err in form.password2.errors %}
+                    <div class="message error">{{ err }}</div>
+                {% endfor %}
             </div>
+
             <button type="submit" class="btn" style="width: 100%;">
                 <span class="btn-text">Create Account📧</span>
             </button>

@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 import calendar as cal
 from .models import Task, Profile
-from .forms import ProfileForm
+from .forms import ProfileForm, RegistrationForm
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.contrib.auth import logout
@@ -67,37 +67,18 @@ def register_view(request):
         return redirect('task_list')
         
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        
-        # Validation
-        if not username or not email or not password1:
-            messages.error(request, 'All fields are required.')
-        elif password1 != password2:
-            messages.error(request, 'Passwords do not match.')
-        elif User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists.')
-        elif User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already exists.')
-        elif len(password1) < 6:
-            messages.error(request, 'Password must be at least 6 characters.')
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Account created for {user.username}!')
+            return redirect('task_list')
         else:
-            try:
-                # Create user with email and log them in
-                user = User.objects.create_user(
-                    username=username, 
-                    email=email, 
-                    password=password1
-                )
-                login(request, user)
-                messages.success(request, f'Account created for {user.username}!')
-                return redirect('task_list')
-            except Exception as e:
-                messages.error(request, 'Error creating account. Please try again.')
-    
-    return render(request, 'to_do_app/register.html')
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = RegistrationForm()
+
+    return render(request, 'to_do_app/register.html', {'form': form})
 
 def logout_view(request):
     logout(request)
