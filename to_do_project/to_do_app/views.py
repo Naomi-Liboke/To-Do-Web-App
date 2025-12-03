@@ -56,6 +56,8 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            # Show a one-time welcome banner on the next page load
+            request.session['show_welcome'] = True
             messages.success(request, f'Welcome back, {user.username}!')
             return redirect('task_list')
         else:

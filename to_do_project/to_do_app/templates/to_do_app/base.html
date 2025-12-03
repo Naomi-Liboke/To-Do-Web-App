@@ -130,7 +130,7 @@
             font-weight: 600;
         }
 
-        .nav-link.active::before {
+        /* .nav-link.active::before {
             content: '';
             position: absolute;
             top: -2px;
@@ -141,7 +141,7 @@
             border-radius: 10px;
             z-index: -1;
             opacity: 0.3;
-        }
+        } */
 
         /* ===== HEADER ACTIONS ===== */
         .header-actions {
@@ -685,7 +685,7 @@
                     </div>
                 {% endif %}
 
-                {% if user.is_authenticated and not request.resolver_match.url_name == 'login' and not request.resolver_match.url_name == 'register' and not request.resolver_match.url_name == 'profile' %}
+                {% if show_welcome %}
                 <div id="welcome-message">
                     Welcome back, {{ user.username }}! 🎉
                 </div>
