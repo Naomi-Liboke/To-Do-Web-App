@@ -22,7 +22,7 @@ urlpatterns = [
     path('test-email/', test_email, name='test_email'),
     path('remove-avatar/', views.remove_avatar, name='remove_avatar'),
     path('profile/delete-account/', views.delete_account, name='delete_account'),
-    path('send-reminder/', views.send_reminder_now, name='send_reminder'),
+    path('send-reminder-now/', views.send_reminder_now, name='send_reminder_now'),
     
     # Password reset URLs
     path('password-reset/', 

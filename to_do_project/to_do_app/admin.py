@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils import timezone
 from .models import Profile, Task
 
 # Custom admin for Profile
@@ -151,8 +152,7 @@ class TaskAdmin(admin.ModelAdmin):
             return f"Due in {days} days"
     days_until_due_display.short_description = 'Due Status'
     
-    # Add import for timezone if not already imported
-    from django.utils import timezone
+    # timezone is imported at module level
 
 # Register models with custom admin classes
 admin.site.register(Profile, ProfileAdmin)
